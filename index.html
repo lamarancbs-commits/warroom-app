@@ -4,14 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>War Room · Human Design</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100;9..40,200;9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.9/babel.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'DM Sans',-apple-system,'Helvetica Neue',sans-serif;background:#0c0f1a;overflow-x:hidden}
+    body{font-family:'DM Sans',-apple-system,sans-serif;background:#0c0f1a;overflow-x:hidden}
     ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:2px}
     button{font-family:inherit;cursor:pointer;border:none;background:none}button:hover{filter:brightness(1.1)}
     input:focus,select:focus{border-color:rgba(56,189,248,0.3)!important;outline:none}
@@ -21,307 +20,398 @@
   </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const{useState,useEffect,useCallback,useMemo}=React;
+<div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect,useCallback,useMemo}=React;
 
-    const CONFIG={
-      GAS_URL:"https://script.google.com/macros/s/AKfycbw1W1XBZ2ZWKbAr5GoItMyLTqm_TaKbjKYe-9pGvVIlaLRqFs8yHhBdfjL_4CWeh7XiqA/exec",
-      HD_API_URL:"https://humandesign-api-5qh4.onrender.com",
-      HD_API_TOKEN:"warroom2024secret",
-      ADMIN_PASSWORD:"HRADMIN123",
-    };
+const CFG={
+  GAS:"https://script.google.com/macros/s/AKfycbw1W1XBZ2ZWKbAr5GoItMyLTqm_TaKbjKYe-9pGvVIlaLRqFs8yHhBdfjL_4CWeh7XiqA/exec",
+  API:"https://humandesign-api-5qh4.onrender.com",
+  TOK:"warroom2024secret",
+  PW:"HRADMIN123",
+};
 
-    const DUMMY=[
-      {id:"1",name:"Rina Hartono",birthdate:"1985-03-15",birthtime:"14:30",birthplace:"Jakarta",type:"Manifestor",profile:"1/3",authority:"Emotional",strategy:"To Inform",definition:"Single",incarnationCross:"Right Angle Cross of Eden",assignedRole:"ceo",centers:[],channels:[],gates:[]},
-      {id:"2",name:"Budi Santoso",birthdate:"1990-07-22",birthtime:"08:15",birthplace:"Surabaya",type:"Projector",profile:"4/6",authority:"Splenic",strategy:"Wait for Invitation",definition:"Split",incarnationCross:"Left Angle Cross of Confrontation",assignedRole:"vp_marketing",centers:[],channels:[],gates:[]},
-      {id:"3",name:"Dewi Lestari",birthdate:"1988-11-03",birthtime:"23:45",birthplace:"Bandung",type:"Generator",profile:"2/4",authority:"Sacral",strategy:"Wait to Respond",definition:"Single",incarnationCross:"Right Angle Cross of Planning",assignedRole:"vp_ops",centers:[],channels:[],gates:[]},
-      {id:"4",name:"Agus Prasetyo",birthdate:"1992-01-18",birthtime:"06:00",birthplace:"Yogyakarta",type:"Manifesting Generator",profile:"3/5",authority:"Emotional",strategy:"Wait to Respond & Inform",definition:"Triple Split",incarnationCross:"Juxtaposition Cross of Formulization",assignedRole:"mgr_sales",centers:[],channels:[],gates:[]},
-      {id:"5",name:"Siti Nurhaliza",birthdate:"1995-05-30",birthtime:"16:20",birthplace:"Semarang",type:"Generator",profile:"5/1",authority:"Sacral",strategy:"Wait to Respond",definition:"Single",incarnationCross:"Right Angle Cross of Consciousness",assignedRole:"mgr_support",centers:[],channels:[],gates:[]},
-      {id:"6",name:"Fajar Nugroho",birthdate:"1993-09-12",birthtime:"11:00",birthplace:"Medan",type:"Generator",profile:"6/2",authority:"Sacral",strategy:"Wait to Respond",definition:"Single",incarnationCross:"Right Angle Cross of Eden",assignedRole:"staff_sales1",centers:[],channels:[],gates:[]},
-      {id:"7",name:"Maya Indah",birthdate:"1991-12-25",birthtime:"03:30",birthplace:"Denpasar",type:"Projector",profile:"4/1",authority:"Self-Projected",strategy:"Wait for Invitation",definition:"Split",incarnationCross:"Left Angle Cross of Revolution",assignedRole:"staff_creative1",centers:[],channels:[],gates:[]},
-      {id:"8",name:"Reza Firmansyah",birthdate:"1994-06-08",birthtime:"20:00",birthplace:"Makassar",type:"Reflector",profile:"2/5",authority:"Lunar",strategy:"Wait a Lunar Cycle",definition:"None",incarnationCross:"Right Angle Cross of Rulership",assignedRole:"",centers:[],channels:[],gates:[]},
-      {id:"9",name:"Putri Ayu",birthdate:"1996-02-14",birthtime:"09:45",birthplace:"Malang",type:"Manifesting Generator",profile:"3/6",authority:"Emotional",strategy:"Wait to Respond & Inform",definition:"Single",incarnationCross:"Juxtaposition Cross of Fates",assignedRole:"",centers:[],channels:[],gates:[]},
-    ];
+const DEFAULT_ROLES=[
+  {roleKey:"ceo",label:"CEO \u00b7 Visionary",category:"CEO/Visionary",parentKey:""},
+  {roleKey:"vp_marketing",label:"VP Marketing",category:"Marketing/Sales",parentKey:"ceo"},
+  {roleKey:"vp_ops",label:"VP Operations",category:"Operations",parentKey:"ceo"},
+  {roleKey:"mgr_sales",label:"Sales Manager",category:"Marketing/Sales",parentKey:"vp_marketing"},
+  {roleKey:"mgr_support",label:"Support Manager",category:"Operations",parentKey:"vp_ops"},
+  {roleKey:"staff_sales1",label:"Sales Rep",category:"Marketing/Sales",parentKey:"mgr_sales"},
+  {roleKey:"staff_creative1",label:"Creative Lead",category:"Creative",parentKey:"vp_marketing"},
+];
 
-    const ORG={
-      ceo:{label:"CEO \u00b7 Visionary",cat:"CEO/Visionary",parent:null},
-      vp_marketing:{label:"VP Marketing",cat:"Marketing/Sales",parent:"ceo"},
-      vp_ops:{label:"VP Operations",cat:"Operations",parent:"ceo"},
-      mgr_sales:{label:"Sales Manager",cat:"Marketing/Sales",parent:"vp_marketing"},
-      mgr_support:{label:"Support Manager",cat:"Operations",parent:"vp_ops"},
-      staff_sales1:{label:"Sales Rep",cat:"Marketing/Sales",parent:"mgr_sales"},
-      staff_creative1:{label:"Creative Lead",cat:"Creative",parent:"vp_marketing"},
-    };
+const DEFAULT_EMPS=[
+  {id:"1",name:"Rina Hartono",birthdate:"1985-03-15",birthtime:"14:30",birthplace:"Jakarta",type:"Manifestor",profile:"1/3",authority:"Emotional",strategy:"To Inform",definition:"Single",incarnationCross:"Right Angle Cross of Eden",assignedRole:"ceo",centers:[],channels:[],gates:[]},
+  {id:"2",name:"Budi Santoso",birthdate:"1990-07-22",birthtime:"08:15",birthplace:"Surabaya",type:"Projector",profile:"4/6",authority:"Splenic",strategy:"Wait for Invitation",definition:"Split",incarnationCross:"Left Angle Cross of Confrontation",assignedRole:"vp_marketing",centers:[],channels:[],gates:[]},
+  {id:"3",name:"Dewi Lestari",birthdate:"1988-11-03",birthtime:"23:45",birthplace:"Bandung",type:"Generator",profile:"2/4",authority:"Sacral",strategy:"Wait to Respond",definition:"Single",incarnationCross:"Right Angle Cross of Planning",assignedRole:"vp_ops",centers:[],channels:[],gates:[]},
+  {id:"4",name:"Agus Prasetyo",birthdate:"1992-01-18",birthtime:"06:00",birthplace:"Yogyakarta",type:"Manifesting Generator",profile:"3/5",authority:"Emotional",strategy:"Wait to Respond & Inform",definition:"Triple Split",incarnationCross:"Juxtaposition Cross of Formulization",assignedRole:"mgr_sales",centers:[],channels:[],gates:[]},
+  {id:"5",name:"Siti Nurhaliza",birthdate:"1995-05-30",birthtime:"16:20",birthplace:"Semarang",type:"Generator",profile:"5/1",authority:"Sacral",strategy:"Wait to Respond",definition:"Single",incarnationCross:"Right Angle Cross of Consciousness",assignedRole:"mgr_support",centers:[],channels:[],gates:[]},
+  {id:"6",name:"Fajar Nugroho",birthdate:"1993-09-12",birthtime:"11:00",birthplace:"Medan",type:"Generator",profile:"6/2",authority:"Sacral",strategy:"Wait to Respond",definition:"Single",incarnationCross:"Right Angle Cross of Eden",assignedRole:"staff_sales1",centers:[],channels:[],gates:[]},
+  {id:"7",name:"Maya Indah",birthdate:"1991-12-25",birthtime:"03:30",birthplace:"Denpasar",type:"Projector",profile:"4/1",authority:"Self-Projected",strategy:"Wait for Invitation",definition:"Split",incarnationCross:"Left Angle Cross of Revolution",assignedRole:"staff_creative1",centers:[],channels:[],gates:[]},
+  {id:"8",name:"Reza Firmansyah",birthdate:"1994-06-08",birthtime:"20:00",birthplace:"Makassar",type:"Reflector",profile:"2/5",authority:"Lunar",strategy:"Wait a Lunar Cycle",definition:"None",incarnationCross:"Right Angle Cross of Rulership",assignedRole:"",centers:[],channels:[],gates:[]},
+  {id:"9",name:"Putri Ayu",birthdate:"1996-02-14",birthtime:"09:45",birthplace:"Malang",type:"Manifesting Generator",profile:"3/6",authority:"Emotional",strategy:"Wait to Respond & Inform",definition:"Single",incarnationCross:"Juxtaposition Cross of Fates",assignedRole:"",centers:[],channels:[],gates:[]},
+];
 
-    const TYPES=["Manifestor","Generator","Manifesting Generator","Projector","Reflector"];
-    const PROFILES=["1/3","1/4","2/4","2/5","3/5","3/6","4/1","4/6","5/1","5/2","6/2","6/3"];
-    const AUTHS=["Emotional","Sacral","Splenic","Ego","Self-Projected","Mental/None","Lunar"];
+const TYPES=["Manifestor","Generator","Manifesting Generator","Projector","Reflector"];
+const PROFILES=["1/3","1/4","2/4","2/5","3/5","3/6","4/1","4/6","5/1","5/2","6/2","6/3"];
+const AUTHS=["Emotional","Sacral","Splenic","Ego","Self-Projected","Mental/None","Lunar"];
+const CATS=["CEO/Visionary","Marketing/Sales","Operations","Creative","Finance","HR","Engineering","Product","Other"];
 
-    function jobFit(rk,e){if(!e)return"gray";const c=ORG[rk]?.cat,t=e.type,p=e.profile||"";if(c==="CEO/Visionary"){if(t==="Manifestor"||t==="Projector")return"green";if(t==="Generator"||t==="Manifesting Generator")return"yellow";return"red";}if(c==="Marketing/Sales"){if(p.includes("4")||p.includes("6")||t==="Manifesting Generator")return"green";if(t==="Projector")return"red";return"yellow";}if(c==="Operations"){if(t==="Generator"||t==="Manifesting Generator")return"green";if(t==="Manifestor"||t==="Reflector")return"red";return"yellow";}if(c==="Creative"){if(t==="Manifestor"||t==="Projector")return"green";if(t==="Generator")return"yellow";return"yellow";}return"gray";}
-    function vertRel(b,s){if(!b||!s)return"gray";const bt=b.type,st=s.type;if(bt==="Projector"&&(st==="Generator"||st==="Manifesting Generator"))return"green";if((bt==="Generator"||bt==="Manifesting Generator")&&st==="Manifestor")return"red";if(bt==="Manifestor"&&st==="Projector")return"yellow";if(bt==="Manifestor"&&(st==="Generator"||st==="Manifesting Generator"))return"green";return"gray";}
-    function teamSyn(arr){if(!arr||arr.length<2)return{c:"gray",l:""};const cn={};arr.forEach(e=>{cn[e.type]=(cn[e.type]||0)+1});const g=(cn["Generator"]||0)+(cn["Manifesting Generator"]||0),m=cn["Manifestor"]||0,p=cn["Projector"]||0;if(g>=3)return{c:"green",l:"Sacral Synergy"};if(m>=2)return{c:"red",l:"Power Struggle"};if(p>=1&&g>=2)return{c:"green",l:"Balanced"};if(g===0&&arr.length>=2)return{c:"red",l:"Low Energy"};return{c:"yellow",l:"Mixed"};}
+function jobFit(cat,e){if(!e||!cat)return"gray";const t=e.type,p=e.profile||"";if(cat==="CEO/Visionary"){if(t==="Manifestor"||t==="Projector")return"green";if(t==="Generator"||t==="Manifesting Generator")return"yellow";return"red";}if(cat==="Marketing/Sales"){if(p.includes("4")||p.includes("6")||t==="Manifesting Generator")return"green";if(t==="Projector")return"red";return"yellow";}if(cat==="Operations"||cat==="Engineering"){if(t==="Generator"||t==="Manifesting Generator")return"green";if(t==="Manifestor"||t==="Reflector")return"red";return"yellow";}if(cat==="Creative"||cat==="Product"){if(t==="Manifestor"||t==="Projector")return"green";if(t==="Generator")return"yellow";return"yellow";}return"yellow";}
+function vertRel(b,s){if(!b||!s)return"gray";const bt=b.type,st=s.type;if(bt==="Projector"&&(st==="Generator"||st==="Manifesting Generator"))return"green";if((bt==="Generator"||bt==="Manifesting Generator")&&st==="Manifestor")return"red";if(bt==="Manifestor"&&st==="Projector")return"yellow";if(bt==="Manifestor"&&(st==="Generator"||st==="Manifesting Generator"))return"green";return"gray";}
+function teamSyn(arr){if(!arr||arr.length<2)return{c:"gray",l:""};const cn={};arr.forEach(e=>{cn[e.type]=(cn[e.type]||0)+1});const g=(cn["Generator"]||0)+(cn["Manifesting Generator"]||0),m=cn["Manifestor"]||0,p=cn["Projector"]||0;if(g>=3)return{c:"green",l:"Sacral Synergy"};if(m>=2)return{c:"red",l:"Power Struggle"};if(p>=1&&g>=2)return{c:"green",l:"Balanced"};if(g===0&&arr.length>=2)return{c:"red",l:"Low Energy"};return{c:"yellow",l:"Mixed"};}
 
-    const SC={green:"#34d399",yellow:"#fbbf24",red:"#f87171",gray:"#6b7280"};
-    const TB={"Manifestor":{c:"#f87171",s:"MAN"},"Generator":{c:"#34d399",s:"GEN"},"Manifesting Generator":{c:"#38bdf8",s:"MG"},"Projector":{c:"#fbbf24",s:"PRJ"},"Reflector":{c:"#c084fc",s:"REF"}};
+const SC={green:"#34d399",yellow:"#fbbf24",red:"#f87171",gray:"#6b7280"};
+const TB={"Manifestor":{c:"#f87171",s:"MAN"},"Generator":{c:"#34d399",s:"GEN"},"Manifesting Generator":{c:"#38bdf8",s:"MG"},"Projector":{c:"#fbbf24",s:"PRJ"},"Reflector":{c:"#c084fc",s:"REF"}};
 
-    const HD={
-      bp(bd,bt,bp){const[y,m,d]=bd.split("-").map(Number);const[h,mi]=(bt||"12:00").split(":").map(Number);return"year="+y+"&month="+m+"&day="+d+"&hour="+h+"&minute="+mi+"&city="+encodeURIComponent(bp);},
-      async calc(bd,bt,bp){try{const r=await fetch(CONFIG.HD_API_URL+"/calculate?"+this.bp(bd,bt,bp),{headers:{"Authorization":"Bearer "+CONFIG.HD_API_TOKEN}});if(!r.ok)throw 0;return await r.json();}catch(e){return null;}},
-      parse(d){if(!d)return{};const g=d.general||{};let pr=g.profile||"";if(pr.includes(":"))pr=pr.split(":")[0].trim();let au=g.inner_authority||"";au=au.replace(/ [Aa]uthority/,"").trim();const ch=(d.channels?.Channels||[]).map(c=>c.channel||c);const pg=(d.gates?.prs?.Planets||[]).map(p=>p.Gate);const dg=(d.gates?.des?.Planets||[]).map(p=>p.Gate);const gates=[...new Set([...pg,...dg])].sort((a,b)=>a-b);return{type:g.energy_type||"",profile:pr,authority:au,strategy:g.strategy||"",definition:g.definition||"",incarnationCross:g.inc_cross||"",centers:g.defined_centers||[],channels:ch,gates};}
-    };
+const HD={
+  bp(bd,bt,bp){const[y,m,d]=bd.split("-").map(Number);const[h,mi]=(bt||"12:00").split(":").map(Number);return"year="+y+"&month="+m+"&day="+d+"&hour="+h+"&minute="+mi+"&city="+encodeURIComponent(bp);},
+  async calc(bd,bt,bp){try{const r=await fetch(CFG.API+"/calculate?"+this.bp(bd,bt,bp),{headers:{"Authorization":"Bearer "+CFG.TOK}});if(!r.ok)throw 0;return await r.json();}catch(e){return null;}},
+  parse(d){if(!d)return{};const g=d.general||{};let pr=g.profile||"";if(pr.includes(":"))pr=pr.split(":")[0].trim();let au=g.inner_authority||"";au=au.replace(/ [Aa]uthority/,"").trim();const ch=(d.channels?.Channels||[]).map(c=>c.channel||c);const pg=(d.gates?.prs?.Planets||[]).map(p=>p.Gate);const dg=(d.gates?.des?.Planets||[]).map(p=>p.Gate);return{type:g.energy_type||"",profile:pr,authority:au,strategy:g.strategy||"",definition:g.definition||"",incarnationCross:g.inc_cross||"",centers:g.defined_centers||[],channels:ch,gates:[...new Set([...pg,...dg])].sort((a,b)=>a-b)};}
+};
 
-    const G={
-      panel:{background:"rgba(255,255,255,0.04)",backdropFilter:"blur(40px) saturate(1.8)",WebkitBackdropFilter:"blur(40px) saturate(1.8)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:20},
-      card:{background:"rgba(255,255,255,0.03)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:16},
-      input:{width:"100%",padding:"10px 14px",borderRadius:12,border:"1px solid rgba(255,255,255,0.08)",background:"rgba(255,255,255,0.04)",color:"#f1f5f9",fontSize:13,fontFamily:"inherit",outline:"none"},
-      select:{width:"100%",padding:"10px 14px",borderRadius:12,border:"1px solid rgba(255,255,255,0.08)",background:"rgba(15,23,42,0.8)",color:"#f1f5f9",fontSize:13,fontFamily:"inherit",outline:"none"},
-    };
-    const lbl={fontSize:10,color:"#64748b",display:"block",marginBottom:5,fontWeight:400,letterSpacing:"0.04em"};
+const G={
+  panel:{background:"rgba(255,255,255,0.04)",backdropFilter:"blur(40px) saturate(1.8)",WebkitBackdropFilter:"blur(40px) saturate(1.8)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:20},
+  card:{background:"rgba(255,255,255,0.03)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:16},
+  inp:{width:"100%",padding:"10px 14px",borderRadius:12,border:"1px solid rgba(255,255,255,0.08)",background:"rgba(255,255,255,0.04)",color:"#f1f5f9",fontSize:13,fontFamily:"inherit",outline:"none"},
+  sel:{width:"100%",padding:"10px 14px",borderRadius:12,border:"1px solid rgba(255,255,255,0.08)",background:"rgba(15,23,42,0.8)",color:"#f1f5f9",fontSize:13,fontFamily:"inherit",outline:"none"},
+};
+const lbl={fontSize:10,color:"#64748b",display:"block",marginBottom:5,fontWeight:400,letterSpacing:"0.04em"};
 
-    function App(){
-      const[view,setView]=useState("dashboard");
-      const[employees,setEmployees]=useState(DUMMY);
-      const[adminAuth,setAdminAuth]=useState(false);
-      const[pw,setPw]=useState("");const[pwErr,setPwErr]=useState(false);
-      const[selBench,setSelBench]=useState(null);const[selRole,setSelRole]=useState(null);
-      const[editing,setEditing]=useState(null);const[showAdd,setShowAdd]=useState(false);
-      const[notif,setNotif]=useState(null);const[detail,setDetail]=useState(null);const[loading,setLoading]=useState(false);
-      const[form,setForm]=useState({name:"",birthdate:"",birthtime:"12:00",birthplace:"",type:"",profile:"",authority:"",strategy:"",definition:"",incarnationCross:"",centers:[],channels:[],gates:[]});
+// Build tree from flat roles array
+function buildTree(roles,aMap){
+  const map={};roles.forEach(r=>{map[r.roleKey]={...r,children:[]};});
+  const roots=[];
+  roles.forEach(r=>{if(r.parentKey&&map[r.parentKey])map[r.parentKey].children.push(map[r.roleKey]);else roots.push(map[r.roleKey]);});
+  // Build levels for rendering
+  function toLevels(nodes,level){
+    if(!nodes.length)return[];
+    let result=[{level,roles:nodes}];
+    const nextChildren=[];nodes.forEach(n=>{if(n.children.length)nextChildren.push(...n.children);});
+    if(nextChildren.length)result=result.concat(toLevels(nextChildren,level+1));
+    return result;
+  }
+  return toLevels(roots,0);
+}
 
-      const notify=(m,t)=>{setNotif({m,t:t||"ok"});setTimeout(()=>setNotif(null),3000);};
-      const aMap=useMemo(()=>{const m={};employees.forEach(e=>{if(e.assignedRole)m[e.assignedRole]=e});return m;},[employees]);
-      const bench=useMemo(()=>employees.filter(e=>!e.assignedRole),[employees]);
-      const teams=useMemo(()=>{const t={};Object.entries(ORG).forEach(([k,r])=>{if(r.parent){if(!t[r.parent])t[r.parent]=[];if(aMap[k])t[r.parent].push(aMap[k]);}});return t;},[aMap]);
+function App(){
+  const[view,setView]=useState("dashboard");
+  const[tab,setTab]=useState("employees"); // "employees"|"structure"
+  const[emps,setEmps]=useState(DEFAULT_EMPS);
+  const[roles,setRoles]=useState(DEFAULT_ROLES);
+  const[auth,setAuth]=useState(false);
+  const[pw,setPw]=useState("");const[pwE,setPwE]=useState(false);
+  const[selB,setSelB]=useState(null);const[selR,setSelR]=useState(null);
+  const[editing,setEditing]=useState(null);const[showAdd,setShowAdd]=useState(false);
+  const[notif,setNotif]=useState(null);const[detail,setDetail]=useState(null);const[loading,setLoading]=useState(false);
+  const[form,setForm]=useState({name:"",birthdate:"",birthtime:"12:00",birthplace:"",type:"",profile:"",authority:"",strategy:"",definition:"",incarnationCross:"",centers:[],channels:[],gates:[]});
+  const[roleForm,setRoleForm]=useState({roleKey:"",label:"",category:"CEO/Visionary",parentKey:""});
+  const[editingRole,setEditingRole]=useState(null);
+  const[showAddRole,setShowAddRole]=useState(false);
 
-      useEffect(()=>{fetch(CONFIG.GAS_URL).then(r=>r.json()).then(d=>{if(d.success&&d.data?.length)setEmployees(d.data);}).catch(()=>{});},[]);
+  const noti=(m,t)=>{setNotif({m,t:t||"ok"});setTimeout(()=>setNotif(null),3000);};
 
-      const clickRole=useCallback((rk)=>{
-        if(selBench){setEmployees(p=>p.map(e=>{if(e.id===selBench)return{...e,assignedRole:rk};if(e.assignedRole===rk)return{...e,assignedRole:""};return e;}));setSelBench(null);setSelRole(null);notify("Assigned");}
-        else if(selRole&&selRole!==rk){const e1=aMap[selRole],e2=aMap[rk];setEmployees(p=>p.map(e=>{if(e1&&e.id===e1.id)return{...e,assignedRole:rk};if(e2&&e.id===e2.id)return{...e,assignedRole:selRole};return e;}));setSelRole(null);notify("Swapped");}
-        else{setSelRole(rk===selRole?null:rk);setSelBench(null);}
-      },[selBench,selRole,aMap]);
-      const unassign=useCallback((rk)=>{setEmployees(p=>p.map(e=>e.assignedRole===rk?{...e,assignedRole:""}:e));notify("Unassigned");},[]);
+  // Build ORG map from roles
+  const ORG=useMemo(()=>{const m={};roles.forEach(r=>{m[r.roleKey]={label:r.label,cat:r.category,parent:r.parentKey||null};});return m;},[roles]);
+  const aMap=useMemo(()=>{const m={};emps.forEach(e=>{if(e.assignedRole&&ORG[e.assignedRole])m[e.assignedRole]=e;});return m;},[emps,ORG]);
+  const bench=useMemo(()=>emps.filter(e=>!e.assignedRole||!ORG[e.assignedRole]),[emps,ORG]);
+  const teams=useMemo(()=>{const t={};Object.keys(ORG).forEach(k=>{const p=ORG[k].parent;if(p){if(!t[p])t[p]=[];if(aMap[k])t[p].push(aMap[k]);}});return t;},[ORG,aMap]);
+  const levels=useMemo(()=>buildTree(roles,aMap),[roles,aMap]);
 
-      const autoCalc=useCallback(async(target,setTarget)=>{
-        if(!target.birthdate||!target.birthtime||!target.birthplace){notify("Fill birth data first","warn");return;}
-        setLoading(true);notify("Calculating...","info");
-        const d=await HD.calc(target.birthdate,target.birthtime,target.birthplace);
-        if(d){const p=HD.parse(d);setTarget({...target,...p});notify("Chart calculated!");}
-        else notify("API offline \u2014 enter manually","warn");
-        setLoading(false);
-      },[]);
+  useEffect(()=>{fetch(CFG.GAS).then(r=>r.json()).then(d=>{if(d.success){if(d.data?.length)setEmps(d.data);if(d.roles?.length)setRoles(d.roles);}}).catch(()=>{});},[]);
 
-      const addEmp=useCallback(()=>{if(!form.name.trim()||!form.type){notify("Name & Type required","warn");return;}setEmployees(p=>[...p,{...form,id:Date.now().toString(),assignedRole:""}]);setForm({name:"",birthdate:"",birthtime:"12:00",birthplace:"",type:"",profile:"",authority:"",strategy:"",definition:"",incarnationCross:"",centers:[],channels:[],gates:[]});setShowAdd(false);notify("Added!");},[form]);
-      const updateEmp=useCallback(()=>{if(!editing)return;setEmployees(p=>p.map(e=>e.id===editing.id?{...editing}:e));setEditing(null);notify("Updated!");},[editing]);
-      const deleteEmp=useCallback((id)=>{setEmployees(p=>p.filter(e=>e.id!==id));notify("Deleted","warn");},[]);
+  const clickRole=useCallback((rk)=>{
+    if(selB){setEmps(p=>p.map(e=>{if(e.id===selB)return{...e,assignedRole:rk};if(e.assignedRole===rk)return{...e,assignedRole:""};return e;}));setSelB(null);setSelR(null);noti("Assigned");}
+    else if(selR&&selR!==rk){const e1=aMap[selR],e2=aMap[rk];setEmps(p=>p.map(e=>{if(e1&&e.id===e1.id)return{...e,assignedRole:rk};if(e2&&e.id===e2.id)return{...e,assignedRole:selR};return e;}));setSelR(null);noti("Swapped");}
+    else{setSelR(rk===selR?null:rk);setSelB(null);}
+  },[selB,selR,aMap]);
 
-      return(
-        React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(145deg,#0c0f1a 0%,#111828 35%,#0e1525 65%,#080b14 100%)",color:"#e2e8f0",fontFamily:"'DM Sans',-apple-system,sans-serif",fontWeight:300}},
-          React.createElement("div",{style:{position:"fixed",top:"-20%",right:"-10%",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(56,189,248,0.06) 0%,transparent 70%)",pointerEvents:"none"}}),
-          React.createElement("div",{style:{position:"fixed",bottom:"-20%",left:"-10%",width:500,height:500,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.05) 0%,transparent 70%)",pointerEvents:"none"}}),
-          notif&&React.createElement("div",{style:{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",zIndex:9999,padding:"10px 24px",borderRadius:14,...G.card,color:notif.t==="ok"?"#34d399":notif.t==="warn"?"#fbbf24":"#38bdf8",fontSize:13,fontWeight:400,animation:"fadeDown .4s ease"}},notif.m),
+  const unassign=useCallback(rk=>{setEmps(p=>p.map(e=>e.assignedRole===rk?{...e,assignedRole:""}:e));noti("Unassigned");},[]);
 
-          React.createElement("header",{style:{position:"relative",zIndex:10,padding:"16px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid rgba(255,255,255,0.04)"}},
-            React.createElement("div",{style:{display:"flex",alignItems:"center",gap:14}},
-              React.createElement("div",{style:{width:38,height:38,borderRadius:12,background:"linear-gradient(135deg,#38bdf8,#818cf8)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:600,color:"#fff"}},"HD"),
-              React.createElement("div",null,
-                React.createElement("div",{style:{fontSize:17,fontWeight:500,color:"#f8fafc"}},"War Room"),
-                React.createElement("div",{style:{fontSize:11,fontWeight:300,color:"#64748b"}},"Human Design \u00b7 Org Intelligence")
-              )
-            ),
-            React.createElement("div",{style:{display:"flex",gap:2,...G.card,padding:3,borderRadius:14}},
-              ["dashboard","admin"].map(t=>React.createElement("button",{key:t,onClick:()=>{setView(t);setDetail(null);},style:{padding:"8px 22px",borderRadius:12,fontSize:12,fontWeight:t===view?500:300,background:t===view?"rgba(255,255,255,0.08)":"transparent",color:t===view?"#f1f5f9":"#64748b",transition:"all .3s"}},t==="dashboard"?"War Room":"HR Admin"))
-            )
-          ),
+  const autoCalc=useCallback(async(t,s)=>{
+    if(!t.birthdate||!t.birthtime||!t.birthplace){noti("Fill birth data","warn");return;}
+    setLoading(true);noti("Calculating...","info");
+    const d=await HD.calc(t.birthdate,t.birthtime,t.birthplace);
+    if(d){s({...t,...HD.parse(d)});noti("Calculated!");}else noti("API offline","warn");
+    setLoading(false);
+  },[]);
 
-          React.createElement("main",{style:{position:"relative",zIndex:5,padding:"24px 28px"}},
-            view==="dashboard"?
-              React.createElement(Dashboard,{employees,aMap,bench,selBench,selRole,clickRole,unassign,teams,detail,setDetail,onBench:(id)=>{setSelBench(id===selBench?null:id);setSelRole(null);}}):
-              React.createElement(Admin,{adminAuth,pw,setPw,pwErr,onPw:()=>{if(pw===CONFIG.ADMIN_PASSWORD){setAdminAuth(true);setPwErr(false);}else setPwErr(true);},employees,addEmp,updateEmp,deleteEmp,editing,setEditing,showAdd,setShowAdd,form,setForm,autoCalc,loading})
+  const addEmp=useCallback(()=>{if(!form.name.trim()||!form.type){noti("Name & Type required","warn");return;}setEmps(p=>[...p,{...form,id:Date.now().toString(),assignedRole:""}]);setForm({name:"",birthdate:"",birthtime:"12:00",birthplace:"",type:"",profile:"",authority:"",strategy:"",definition:"",incarnationCross:"",centers:[],channels:[],gates:[]});setShowAdd(false);noti("Added!");},[form]);
+  const updateEmp=useCallback(()=>{if(!editing)return;setEmps(p=>p.map(e=>e.id===editing.id?{...editing}:e));setEditing(null);noti("Updated!");},[editing]);
+  const deleteEmp=useCallback(id=>{setEmps(p=>p.filter(e=>e.id!==id));noti("Deleted","warn");},[]);
+
+  // Role CRUD
+  const addRole=useCallback(()=>{
+    if(!roleForm.roleKey||!roleForm.label){noti("Key & Label required","warn");return;}
+    if(roles.find(r=>r.roleKey===roleForm.roleKey)){noti("Key already exists","warn");return;}
+    const nr=[...roles,{...roleForm}];setRoles(nr);
+    fetch(CFG.GAS,{method:"POST",body:JSON.stringify({action:"addRole",...roleForm})}).catch(()=>{});
+    setRoleForm({roleKey:"",label:"",category:"CEO/Visionary",parentKey:""});setShowAddRole(false);noti("Role added!");
+  },[roleForm,roles]);
+
+  const updateRole=useCallback(()=>{
+    if(!editingRole)return;
+    setRoles(p=>p.map(r=>r.roleKey===editingRole.roleKey?{...editingRole}:r));
+    fetch(CFG.GAS,{method:"POST",body:JSON.stringify({action:"editRole",...editingRole})}).catch(()=>{});
+    setEditingRole(null);noti("Role updated!");
+  },[editingRole]);
+
+  const deleteRole=useCallback(rk=>{
+    setRoles(p=>p.filter(r=>r.roleKey!==rk));
+    setEmps(p=>p.map(e=>e.assignedRole===rk?{...e,assignedRole:""}:e));
+    fetch(CFG.GAS,{method:"POST",body:JSON.stringify({action:"deleteRole",roleKey:rk})}).catch(()=>{});
+    noti("Role deleted","warn");
+  },[]);
+
+  return(
+    React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(145deg,#0c0f1a 0%,#111828 35%,#0e1525 65%,#080b14 100%)",color:"#e2e8f0",fontFamily:"'DM Sans',-apple-system,sans-serif",fontWeight:300}},
+      React.createElement("div",{style:{position:"fixed",top:"-20%",right:"-10%",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(56,189,248,0.06) 0%,transparent 70%)",pointerEvents:"none"}}),
+      React.createElement("div",{style:{position:"fixed",bottom:"-20%",left:"-10%",width:500,height:500,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.05) 0%,transparent 70%)",pointerEvents:"none"}}),
+      notif&&React.createElement("div",{style:{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",zIndex:9999,padding:"10px 24px",borderRadius:14,...G.card,color:notif.t==="ok"?"#34d399":notif.t==="warn"?"#fbbf24":"#38bdf8",fontSize:13,fontWeight:400,animation:"fadeDown .4s ease"}},notif.m),
+
+      // Header
+      React.createElement("header",{style:{position:"relative",zIndex:10,padding:"16px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid rgba(255,255,255,0.04)"}},
+        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:14}},
+          React.createElement("div",{style:{width:38,height:38,borderRadius:12,background:"linear-gradient(135deg,#38bdf8,#818cf8)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:600,color:"#fff"}},"HD"),
+          React.createElement("div",null,
+            React.createElement("div",{style:{fontSize:17,fontWeight:500,color:"#f8fafc"}},"War Room"),
+            React.createElement("div",{style:{fontSize:11,fontWeight:300,color:"#64748b"}},"Human Design \u00b7 Org Intelligence \u00b7 "+roles.length+" roles")
           )
+        ),
+        React.createElement("div",{style:{display:"flex",gap:2,...G.card,padding:3,borderRadius:14}},
+          ["dashboard","admin"].map(t=>React.createElement("button",{key:t,onClick:()=>{setView(t);setDetail(null);},style:{padding:"8px 22px",borderRadius:12,fontSize:12,fontWeight:t===view?500:300,background:t===view?"rgba(255,255,255,0.08)":"transparent",color:t===view?"#f1f5f9":"#64748b",transition:"all .3s"}},t==="dashboard"?"War Room":"HR Admin"))
         )
-      );
-    }
+      ),
 
-    function Dashboard({employees,aMap,bench,selBench,selRole,clickRole,unassign,teams,detail,setDetail,onBench}){
-      return React.createElement("div",{style:{display:"flex",gap:20,minHeight:"calc(100vh - 110px)"}},
-        React.createElement("div",{style:{width:210,flexShrink:0,...G.panel,padding:18}},
-          React.createElement("div",{style:{fontSize:11,fontWeight:400,color:"#64748b",letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:16}},"Bench \u00b7 "+bench.length),
-          bench.length===0&&React.createElement("div",{style:{fontSize:12,color:"#334155",textAlign:"center",padding:20}},"All assigned"),
-          bench.map(e=>React.createElement("button",{key:e.id,onClick:()=>onBench(e.id),style:{width:"100%",padding:"12px 14px",marginBottom:6,borderRadius:14,border:selBench===e.id?"1px solid rgba(52,211,153,0.3)":"1px solid rgba(255,255,255,0.04)",background:selBench===e.id?"rgba(52,211,153,0.06)":"rgba(255,255,255,0.02)",textAlign:"left",fontFamily:"inherit",transition:"all .3s",animation:selBench===e.id?"softPulse 2s infinite":"none"}},
-            React.createElement("div",{style:{fontSize:13,fontWeight:400,color:"#f1f5f9",marginBottom:4}},e.name),
-            React.createElement("div",{style:{display:"flex",gap:6,alignItems:"center"}},
-              React.createElement("span",{style:{fontSize:10,fontWeight:500,padding:"2px 8px",borderRadius:8,background:(TB[e.type]?.c||"#666")+"15",color:TB[e.type]?.c}},TB[e.type]?.s),
-              React.createElement("span",{style:{fontSize:11,color:"#64748b",fontWeight:300}},e.profile)
-            )
-          )),
-          selBench&&React.createElement("div",{style:{marginTop:12,fontSize:11,color:"#34d399",textAlign:"center",fontWeight:300}},"Tap a role to assign")
-        ),
+      React.createElement("main",{style:{position:"relative",zIndex:5,padding:"24px 28px"}},
+        view==="dashboard"?
+          React.createElement(Dashboard,{ORG,aMap,bench,selB,selR,clickRole,unassign,teams,detail,setDetail,levels,onBench:id=>{setSelB(id===selB?null:id);setSelR(null);}}):
+          React.createElement(Admin,{auth,pw,setPw,pwE,onPw:()=>{if(pw===CFG.PW){setAuth(true);setPwE(false);}else setPwE(true);},emps,addEmp,updateEmp,deleteEmp,editing,setEditing,showAdd,setShowAdd,form,setForm,autoCalc,loading,tab,setTab,roles,ORG,addRole,updateRole,deleteRole,roleForm,setRoleForm,editingRole,setEditingRole,showAddRole,setShowAddRole})
+      )
+    )
+  );
+}
 
-        React.createElement("div",{style:{flex:1,overflow:"auto"}},
-          React.createElement("div",{style:{display:"flex",gap:20,marginBottom:20,flexWrap:"wrap"}},
-            [{c:"#34d399",l:"Great Fit"},{c:"#fbbf24",l:"Caution"},{c:"#f87171",l:"Risk"},{c:"#6b7280",l:"Empty"}].map(x=>
-              React.createElement("div",{key:x.l,style:{display:"flex",alignItems:"center",gap:6,fontSize:11,color:"#94a3b8",fontWeight:300}},
-                React.createElement("div",{style:{width:8,height:8,borderRadius:"50%",background:x.c,opacity:0.8}}),x.l
-              )
-            )
-          ),
-          React.createElement(OrgChart,{aMap,selRole,clickRole,unassign,teams,setDetail})
-        ),
+// ═══ DASHBOARD ═══
+function Dashboard({ORG,aMap,bench,selB,selR,clickRole,unassign,teams,detail,setDetail,levels,onBench}){
+  return React.createElement("div",{style:{display:"flex",gap:20,minHeight:"calc(100vh - 110px)"}},
+    // Bench
+    React.createElement("div",{style:{width:210,flexShrink:0,...G.panel,padding:18}},
+      React.createElement("div",{style:{fontSize:11,fontWeight:400,color:"#64748b",letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:16}},"Bench \u00b7 "+bench.length),
+      bench.length===0&&React.createElement("div",{style:{fontSize:12,color:"#334155",textAlign:"center",padding:20}},"All assigned"),
+      bench.map(e=>React.createElement("button",{key:e.id,onClick:()=>onBench(e.id),style:{width:"100%",padding:"12px 14px",marginBottom:6,borderRadius:14,border:selB===e.id?"1px solid rgba(52,211,153,0.3)":"1px solid rgba(255,255,255,0.04)",background:selB===e.id?"rgba(52,211,153,0.06)":"rgba(255,255,255,0.02)",textAlign:"left",fontFamily:"inherit",transition:"all .3s",animation:selB===e.id?"softPulse 2s infinite":"none"}},
+        React.createElement("div",{style:{fontSize:13,fontWeight:400,color:"#f1f5f9",marginBottom:4}},e.name),
+        React.createElement("div",{style:{display:"flex",gap:6,alignItems:"center"}},
+          React.createElement("span",{style:{fontSize:10,fontWeight:500,padding:"2px 8px",borderRadius:8,background:(TB[e.type]?.c||"#666")+"15",color:TB[e.type]?.c||"#666"}},TB[e.type]?.s||"?"),
+          React.createElement("span",{style:{fontSize:11,color:"#64748b",fontWeight:300}},e.profile)
+        )
+      )),
+      selB&&React.createElement("div",{style:{marginTop:12,fontSize:11,color:"#34d399",textAlign:"center",fontWeight:300}},"Tap a role to assign")
+    ),
+    // Dynamic Org Chart
+    React.createElement("div",{style:{flex:1,overflow:"auto"}},
+      React.createElement("div",{style:{display:"flex",gap:20,marginBottom:20}},
+        [{c:"#34d399",l:"Great Fit"},{c:"#fbbf24",l:"Caution"},{c:"#f87171",l:"Risk"},{c:"#6b7280",l:"Empty"}].map(x=>
+          React.createElement("div",{key:x.l,style:{display:"flex",alignItems:"center",gap:6,fontSize:11,color:"#94a3b8",fontWeight:300}},React.createElement("div",{style:{width:8,height:8,borderRadius:"50%",background:x.c,opacity:0.8}}),x.l)
+        )
+      ),
+      React.createElement(DynOrgChart,{levels,ORG,aMap,selR,clickRole,unassign,teams,setDetail})
+    ),
+    detail&&React.createElement(DetailPanel,{emp:detail,onClose:()=>setDetail(null),ORG})
+  );
+}
 
-        detail&&React.createElement(DetailPanel,{emp:detail,onClose:()=>setDetail(null),aMap})
-      );
-    }
-
-    function OrgChart({aMap,selRole,clickRole,unassign,teams,setDetail}){
-      const rows=[[["ceo"]],[["vp_marketing","vp_ops"]],[["mgr_sales","staff_creative1","mgr_support"]],[["staff_sales1"]]];
-      return React.createElement("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:0}},
-        rows.map((row,ri)=>React.createElement("div",{key:ri},
-          ri>0&&React.createElement("div",{style:{display:"flex",justifyContent:"center",height:40}},
-            row[0].map(rk=>{const par=ORG[rk]?.parent;if(!par)return null;const b=aMap[par],s=aMap[rk];const v=vertRel(b,s);
-              return React.createElement("div",{key:rk,style:{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"0 44px",position:"relative"}},
-                React.createElement("div",{style:{width:1,height:40,background:"linear-gradient(to bottom,"+SC[v]+"44,"+SC[v]+")"}}),
-                v!=="gray"&&React.createElement("div",{style:{position:"absolute",top:"50%",transform:"translateY(-50%)",fontSize:9,fontWeight:400,color:SC[v],background:"#111828",padding:"2px 8px",borderRadius:8,whiteSpace:"nowrap",border:"1px solid "+SC[v]+"33"}},v==="green"?"synergy":v==="red"?"risk":"caution")
-              );
-            })
-          ),
-          React.createElement("div",{style:{display:"flex",justifyContent:"center",gap:14,flexWrap:"wrap"}},
-            row[0].map(rk=>{const role=ORG[rk],emp=aMap[rk],jf=jobFit(rk,emp),isSel=selRole===rk;const team=teams[rk],syn=team?teamSyn(team):null;
-              return React.createElement("div",{key:rk,style:{position:"relative",marginBottom:syn&&syn.c!=="gray"?18:4}},
-                React.createElement("button",{onClick:()=>clickRole(rk),onDoubleClick:()=>emp&&setDetail(emp),style:{width:184,padding:"16px 16px 14px",...G.card,borderColor:isSel?"rgba(56,189,248,0.3)":emp?SC[jf]+"22":"rgba(255,255,255,0.04)",background:isSel?"rgba(56,189,248,0.06)":emp?SC[jf]+"08":"rgba(255,255,255,0.02)",textAlign:"left",fontFamily:"inherit",transition:"all .35s ease",boxShadow:isSel?"0 0 30px rgba(56,189,248,0.08)":"0 2px 20px rgba(0,0,0,0.1)"}},
-                  React.createElement("div",{style:{fontSize:10,fontWeight:400,color:"#64748b",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:8}},role.label),
-                  emp?React.createElement(React.Fragment,null,
-                    React.createElement("div",{style:{fontSize:14,fontWeight:400,color:"#f8fafc",marginBottom:8}},emp.name),
-                    React.createElement("div",{style:{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}},
-                      React.createElement("span",{style:{fontSize:10,fontWeight:500,padding:"3px 9px",borderRadius:8,background:(TB[emp.type]?.c||"#666")+"12",color:TB[emp.type]?.c}},TB[emp.type]?.s),
-                      React.createElement("span",{style:{fontSize:11,color:"#94a3b8",fontWeight:300}},emp.profile),
-                      React.createElement("span",{style:{fontSize:11,color:"#64748b",fontWeight:300}},emp.authority)
-                    ),
-                    emp.strategy&&React.createElement("div",{style:{fontSize:10,color:"#475569",marginTop:6,fontWeight:300}},emp.strategy),
-                    React.createElement("div",{style:{position:"absolute",top:10,right:10,width:8,height:8,borderRadius:"50%",background:SC[jf],opacity:0.9}})
-                  ):React.createElement("div",{style:{fontSize:12,color:"#334155",fontWeight:300,fontStyle:"italic",padding:"8px 0"}},isSel?"Select employee...":"Empty slot")
+// ═══ DYNAMIC ORG CHART (renders any depth) ═══
+function DynOrgChart({levels,ORG,aMap,selR,clickRole,unassign,teams,setDetail}){
+  return React.createElement("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:0}},
+    levels.map((lv,li)=>React.createElement("div",{key:li},
+      li>0&&React.createElement("div",{style:{display:"flex",justifyContent:"center",height:36}},
+        lv.roles.map(r=>{const par=r.parentKey;if(!par)return null;const b=aMap[par],s=aMap[r.roleKey];const v=vertRel(b,s);
+          return React.createElement("div",{key:r.roleKey,style:{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"0 36px",position:"relative"}},
+            React.createElement("div",{style:{width:1,height:36,background:"linear-gradient(to bottom,"+SC[v]+"44,"+SC[v]+")"}}),
+            v!=="gray"&&React.createElement("div",{style:{position:"absolute",top:"50%",transform:"translateY(-50%)",fontSize:8,fontWeight:400,color:SC[v],background:"#111828",padding:"2px 7px",borderRadius:8,whiteSpace:"nowrap",border:"1px solid "+SC[v]+"33"}},v==="green"?"synergy":v==="red"?"risk":"caution")
+          );
+        })
+      ),
+      React.createElement("div",{style:{display:"flex",justifyContent:"center",gap:12,flexWrap:"wrap"}},
+        lv.roles.map(r=>{
+          const rk=r.roleKey,role=ORG[rk],emp=aMap[rk],jf=jobFit(role?.cat,emp),isSel=selR===rk;
+          const team=teams[rk],syn=team?teamSyn(team):null;
+          return React.createElement("div",{key:rk,style:{position:"relative",marginBottom:syn&&syn.c!=="gray"?16:4}},
+            React.createElement("button",{onClick:()=>clickRole(rk),onDoubleClick:()=>emp&&setDetail(emp),style:{width:176,padding:"14px 14px 12px",...G.card,borderColor:isSel?"rgba(56,189,248,0.3)":emp?SC[jf]+"22":"rgba(255,255,255,0.04)",background:isSel?"rgba(56,189,248,0.06)":emp?SC[jf]+"08":"rgba(255,255,255,0.02)",textAlign:"left",fontFamily:"inherit",transition:"all .35s",boxShadow:isSel?"0 0 30px rgba(56,189,248,0.08)":"0 2px 20px rgba(0,0,0,0.1)"}},
+              React.createElement("div",{style:{fontSize:9,fontWeight:400,color:"#64748b",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:7}},role?.label||rk),
+              emp?React.createElement(React.Fragment,null,
+                React.createElement("div",{style:{fontSize:13,fontWeight:400,color:"#f8fafc",marginBottom:6}},emp.name),
+                React.createElement("div",{style:{display:"flex",gap:5,alignItems:"center",flexWrap:"wrap"}},
+                  React.createElement("span",{style:{fontSize:9,fontWeight:500,padding:"2px 8px",borderRadius:7,background:(TB[emp.type]?.c||"#666")+"12",color:TB[emp.type]?.c||"#666"}},TB[emp.type]?.s||"?"),
+                  React.createElement("span",{style:{fontSize:10,color:"#94a3b8",fontWeight:300}},emp.profile)
                 ),
-                emp&&React.createElement("button",{onClick:(ev)=>{ev.stopPropagation();unassign(rk);},style:{position:"absolute",top:-4,right:-4,width:20,height:20,borderRadius:10,background:"rgba(15,23,42,0.9)",border:"1px solid rgba(248,113,113,0.2)",color:"#f87171",fontSize:11,display:"flex",alignItems:"center",justifyContent:"center"}},"\u00d7"),
-                syn&&syn.c!=="gray"&&React.createElement("div",{style:{position:"absolute",bottom:-12,left:"50%",transform:"translateX(-50%)",fontSize:9,fontWeight:400,padding:"3px 10px",borderRadius:10,...G.card,borderColor:SC[syn.c]+"22",color:SC[syn.c],whiteSpace:"nowrap"}},syn.l)
-              );
-            })
-          )
+                React.createElement("div",{style:{position:"absolute",top:8,right:8,width:7,height:7,borderRadius:"50%",background:SC[jf],opacity:0.9}})
+              ):React.createElement("div",{style:{fontSize:11,color:"#334155",fontWeight:300,fontStyle:"italic",padding:"6px 0"}},isSel?"Select...":"Empty")
+            ),
+            emp&&React.createElement("button",{onClick:ev=>{ev.stopPropagation();unassign(rk);},style:{position:"absolute",top:-4,right:-4,width:18,height:18,borderRadius:9,background:"rgba(15,23,42,0.9)",border:"1px solid rgba(248,113,113,0.2)",color:"#f87171",fontSize:10,display:"flex",alignItems:"center",justifyContent:"center"}},"\u00d7"),
+            syn&&syn.c!=="gray"&&React.createElement("div",{style:{position:"absolute",bottom:-10,left:"50%",transform:"translateX(-50%)",fontSize:8,fontWeight:400,padding:"2px 8px",borderRadius:8,...G.card,borderColor:SC[syn.c]+"22",color:SC[syn.c],whiteSpace:"nowrap"}},syn.l)
+          );
+        })
+      )
+    )),
+    React.createElement("div",{style:{marginTop:24,fontSize:11,color:"#334155",fontWeight:300,textAlign:"center"}},"Tap to assign \u00b7 Tap two roles to swap \u00b7 Double-tap for profile")
+  );
+}
+
+// ═══ DETAIL PANEL ═══
+function DetailPanel({emp,onClose,ORG}){
+  const b=TB[emp.type]||{c:"#666"};
+  return React.createElement("div",{style:{width:270,flexShrink:0,...G.panel,padding:20,animation:"fadeIn .4s ease",overflowY:"auto",maxHeight:"calc(100vh - 110px)"}},
+    React.createElement("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:16}},
+      React.createElement("div",null,
+        React.createElement("div",{style:{fontSize:15,fontWeight:400,color:"#f8fafc"}},emp.name),
+        React.createElement("div",{style:{fontSize:10,color:"#64748b",fontWeight:300,marginTop:2}},emp.assignedRole?ORG[emp.assignedRole]?.label:"Bench")
+      ),
+      React.createElement("button",{onClick:onClose,style:{color:"#475569",fontSize:16,fontWeight:200}},"\u00d7")
+    ),
+    React.createElement("div",{style:{padding:"12px 14px",borderRadius:14,background:b.c+"08",border:"1px solid "+b.c+"18",marginBottom:14}},
+      React.createElement("div",{style:{fontSize:9,color:"#64748b",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:4}},"Energy Type"),
+      React.createElement("div",{style:{fontSize:18,fontWeight:300,color:b.c}},emp.type)
+    ),
+    React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginBottom:14}},
+      [{l:"Profile",v:emp.profile},{l:"Authority",v:emp.authority},{l:"Strategy",v:emp.strategy},{l:"Definition",v:emp.definition}].filter(x=>x.v).map(x=>
+        React.createElement("div",{key:x.l,style:{padding:"8px 10px",borderRadius:10,...G.card}},
+          React.createElement("div",{style:{fontSize:8,color:"#475569",textTransform:"uppercase",letterSpacing:".08em"}},x.l),
+          React.createElement("div",{style:{fontSize:11,fontWeight:400,color:"#cbd5e1",marginTop:3}},x.v)
+        )
+      )
+    ),
+    emp.incarnationCross&&React.createElement("div",{style:{padding:"8px 12px",borderRadius:10,...G.card,marginBottom:12}},
+      React.createElement("div",{style:{fontSize:8,color:"#475569",textTransform:"uppercase"}},  "Incarnation Cross"),
+      React.createElement("div",{style:{fontSize:10,fontWeight:300,color:"#94a3b8",marginTop:3}},emp.incarnationCross)
+    )
+  );
+}
+
+// ═══ ADMIN ═══
+function Admin({auth,pw,setPw,pwE,onPw,emps,addEmp,updateEmp,deleteEmp,editing,setEditing,showAdd,setShowAdd,form,setForm,autoCalc,loading,tab,setTab,roles,ORG,addRole,updateRole,deleteRole,roleForm,setRoleForm,editingRole,setEditingRole,showAddRole,setShowAddRole}){
+  if(!auth)return React.createElement("div",{style:{display:"flex",justifyContent:"center",alignItems:"center",minHeight:"55vh"}},
+    React.createElement("div",{style:{width:360,padding:36,...G.panel}},
+      React.createElement("div",{style:{textAlign:"center",marginBottom:28}},
+        React.createElement("div",{style:{width:48,height:48,borderRadius:16,background:"rgba(56,189,248,0.08)",margin:"0 auto 14px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}},"\uD83D\uDD12"),
+        React.createElement("div",{style:{fontSize:18,fontWeight:400,color:"#f8fafc"}},"HR Admin"),
+        React.createElement("div",{style:{fontSize:12,color:"#64748b",fontWeight:300,marginTop:6}},"Enter password")
+      ),
+      React.createElement("input",{type:"password",value:pw,onChange:e=>setPw(e.target.value),onKeyDown:e=>e.key==="Enter"&&onPw(),placeholder:"Password",style:{...G.inp,marginBottom:12,textAlign:"center",fontSize:15,letterSpacing:"0.1em"}}),
+      pwE&&React.createElement("div",{style:{fontSize:11,color:"#f87171",marginBottom:12,textAlign:"center"}},"Incorrect"),
+      React.createElement("button",{onClick:onPw,style:{width:"100%",padding:"12px 0",borderRadius:14,background:"linear-gradient(135deg,#38bdf8,#818cf8)",color:"#fff",fontSize:14,fontWeight:400}},"Unlock")
+    )
+  );
+
+  // Tab switcher
+  const tabBtn=(k,l)=>React.createElement("button",{key:k,onClick:()=>setTab(k),style:{padding:"8px 20px",borderRadius:12,fontSize:12,fontWeight:tab===k?500:300,background:tab===k?"rgba(255,255,255,0.08)":"transparent",color:tab===k?"#f1f5f9":"#64748b",transition:"all .3s"}},l);
+
+  return React.createElement("div",{style:{maxWidth:960,margin:"0 auto"}},
+    // Tab bar
+    React.createElement("div",{style:{display:"flex",gap:2,...G.card,padding:3,borderRadius:14,marginBottom:24,width:"fit-content"}},
+      tabBtn("employees","Employees ("+emps.length+")"),
+      tabBtn("structure","Org Structure ("+roles.length+")")
+    ),
+
+    tab==="employees"?React.createElement(EmpTab,{emps,addEmp,updateEmp,deleteEmp,editing,setEditing,showAdd,setShowAdd,form,setForm,autoCalc,loading,ORG}):
+    React.createElement(RoleTab,{roles,ORG,addRole,updateRole,deleteRole,roleForm,setRoleForm,editingRole,setEditingRole,showAddRole,setShowAddRole})
+  );
+}
+
+// ═══ EMPLOYEE TAB ═══
+function EmpTab({emps,addEmp,updateEmp,deleteEmp,editing,setEditing,showAdd,setShowAdd,form,setForm,autoCalc,loading,ORG}){
+  const cur=editing||form;const setCur=editing?setEditing:setForm;
+  return React.createElement(React.Fragment,null,
+    React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}},
+      React.createElement("div",{style:{fontSize:18,fontWeight:400,color:"#f8fafc"}},"Employee Database"),
+      React.createElement("button",{onClick:()=>{setShowAdd(!showAdd);setEditing(null);},style:{padding:"10px 22px",borderRadius:14,...G.card,border:"1px solid "+(showAdd?"rgba(248,113,113,0.2)":"rgba(52,211,153,0.2)"),color:showAdd?"#f87171":"#34d399",fontWeight:400,fontSize:12}},showAdd?"Cancel":"+ Add Employee")
+    ),
+    (showAdd||editing)&&React.createElement("div",{style:{...G.panel,padding:24,marginBottom:24,animation:"fadeIn .4s ease"}},
+      React.createElement("div",{style:{fontSize:15,fontWeight:400,color:"#f8fafc",marginBottom:18}},editing?"Edit Employee":"New Employee"),
+      React.createElement("div",{style:{padding:18,borderRadius:16,background:"rgba(56,189,248,0.03)",border:"1px dashed rgba(56,189,248,0.12)",marginBottom:18}},
+        React.createElement("div",{style:{fontSize:11,fontWeight:400,color:"#38bdf8",marginBottom:14}},"Birth Data \u2014 auto-calculate via HD API"),
+        React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}},
+          React.createElement("div",null,React.createElement("label",{style:lbl},"Date"),React.createElement("input",{type:"date",value:cur.birthdate||"",onChange:e=>setCur({...cur,birthdate:e.target.value}),style:G.inp})),
+          React.createElement("div",null,React.createElement("label",{style:lbl},"Time"),React.createElement("input",{type:"time",value:cur.birthtime||"12:00",onChange:e=>setCur({...cur,birthtime:e.target.value}),style:G.inp})),
+          React.createElement("div",null,React.createElement("label",{style:lbl},"Place"),React.createElement("input",{value:cur.birthplace||"",onChange:e=>setCur({...cur,birthplace:e.target.value}),placeholder:"e.g. Jakarta",style:G.inp}))
+        ),
+        React.createElement("button",{onClick:()=>autoCalc(cur,setCur),disabled:loading,style:{marginTop:14,padding:"8px 20px",borderRadius:12,background:"linear-gradient(135deg,#38bdf8,#34d399)",color:"#0f172a",fontSize:12,fontWeight:500,opacity:loading?.5:1}},loading?"Calculating...":"Auto-Calculate HD Chart")
+      ),
+      React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}},
+        React.createElement("div",null,React.createElement("label",{style:lbl},"Full Name"),React.createElement("input",{value:cur.name||"",onChange:e=>setCur({...cur,name:e.target.value}),style:G.inp})),
+        React.createElement("div",null,React.createElement("label",{style:lbl},"Type"),React.createElement("select",{value:cur.type||"",onChange:e=>setCur({...cur,type:e.target.value}),style:G.sel},React.createElement("option",{value:""},"\u2014 select \u2014"),TYPES.map(t=>React.createElement("option",{key:t,value:t},t)))),
+        React.createElement("div",null,React.createElement("label",{style:lbl},"Profile"),React.createElement("select",{value:cur.profile||"",onChange:e=>setCur({...cur,profile:e.target.value}),style:G.sel},React.createElement("option",{value:""},"\u2014 auto \u2014"),PROFILES.map(p=>React.createElement("option",{key:p,value:p},p)))),
+        React.createElement("div",null,React.createElement("label",{style:lbl},"Authority"),React.createElement("select",{value:cur.authority||"",onChange:e=>setCur({...cur,authority:e.target.value}),style:G.sel},React.createElement("option",{value:""},"\u2014 auto \u2014"),AUTHS.map(a=>React.createElement("option",{key:a,value:a},a))))
+      ),
+      React.createElement("button",{onClick:editing?updateEmp:addEmp,style:{padding:"10px 28px",borderRadius:12,background:"linear-gradient(135deg,#34d399,#38bdf8)",color:"#0f172a",fontSize:12,fontWeight:500}},editing?"Save":"Add Employee")
+    ),
+    React.createElement("div",{style:{...G.panel,overflow:"hidden"}},
+      React.createElement("table",{style:{width:"100%",borderCollapse:"collapse"}},
+        React.createElement("thead",null,React.createElement("tr",{style:{borderBottom:"1px solid rgba(255,255,255,0.04)"}},
+          ["Name","Type","Profile","Authority","Role",""].map(h=>React.createElement("th",{key:h,style:{padding:"14px 14px",textAlign:"left",fontSize:10,fontWeight:400,color:"#475569",letterSpacing:".1em",textTransform:"uppercase"}},h))
         )),
-        React.createElement("div",{style:{marginTop:28,fontSize:11,color:"#334155",fontWeight:300,textAlign:"center"}},"Tap to assign \u00b7 Tap two roles to swap \u00b7 Double-tap for profile")
-      );
-    }
+        React.createElement("tbody",null,emps.map(e=>React.createElement("tr",{key:e.id,style:{borderBottom:"1px solid rgba(255,255,255,0.02)"}},
+          React.createElement("td",{style:{padding:"12px 14px",fontWeight:400,color:"#e2e8f0",fontSize:13}},e.name),
+          React.createElement("td",{style:{padding:"12px 14px"}},React.createElement("span",{style:{fontSize:10,fontWeight:500,padding:"3px 10px",borderRadius:8,background:(TB[e.type]?.c||"#666")+"10",color:TB[e.type]?.c||"#666"}},e.type)),
+          React.createElement("td",{style:{padding:"12px 14px",color:"#94a3b8",fontSize:12,fontWeight:300}},e.profile),
+          React.createElement("td",{style:{padding:"12px 14px",color:"#94a3b8",fontSize:12,fontWeight:300}},e.authority),
+          React.createElement("td",{style:{padding:"12px 14px",color:"#64748b",fontSize:11,fontWeight:300}},e.assignedRole&&ORG[e.assignedRole]?ORG[e.assignedRole].label:"\u2014"),
+          React.createElement("td",{style:{padding:"12px 14px"}},React.createElement("div",{style:{display:"flex",gap:6}},
+            React.createElement("button",{onClick:()=>{setEditing({...e});setShowAdd(false);},style:{padding:"5px 12px",borderRadius:10,...G.card,color:"#fbbf24",fontSize:10,border:"1px solid rgba(251,191,36,0.15)"}},"Edit"),
+            React.createElement("button",{onClick:()=>deleteEmp(e.id),style:{padding:"5px 10px",borderRadius:10,...G.card,color:"#f87171",fontSize:10,border:"1px solid rgba(248,113,113,0.15)"}},"\u00d7")
+          ))
+        )))
+      )
+    )
+  );
+}
 
-    function DetailPanel({emp,onClose}){
-      const b=TB[emp.type]||{c:"#666"};
-      return React.createElement("div",{style:{width:280,flexShrink:0,...G.panel,padding:20,animation:"fadeIn .4s ease",overflowY:"auto",maxHeight:"calc(100vh - 110px)"}},
-        React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"start",marginBottom:18}},
-          React.createElement("div",null,
-            React.createElement("div",{style:{fontSize:16,fontWeight:400,color:"#f8fafc"}},emp.name),
-            React.createElement("div",{style:{fontSize:11,color:"#64748b",fontWeight:300,marginTop:3}},emp.assignedRole?ORG[emp.assignedRole]?.label:"Bench")
-          ),
-          React.createElement("button",{onClick:onClose,style:{color:"#475569",fontSize:18,fontWeight:200}},"\u00d7")
-        ),
-        React.createElement("div",{style:{padding:"14px 16px",borderRadius:14,background:b.c+"08",border:"1px solid "+b.c+"18",marginBottom:16}},
-          React.createElement("div",{style:{fontSize:10,color:"#64748b",textTransform:"uppercase",letterSpacing:"0.1em",fontWeight:400,marginBottom:6}},"Energy Type"),
-          React.createElement("div",{style:{fontSize:20,fontWeight:300,color:b.c}},emp.type)
-        ),
-        React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:16}},
-          [{l:"Profile",v:emp.profile},{l:"Authority",v:emp.authority},{l:"Strategy",v:emp.strategy},{l:"Definition",v:emp.definition}].filter(x=>x.v).map(x=>
-            React.createElement("div",{key:x.l,style:{padding:"10px 12px",borderRadius:12,...G.card}},
-              React.createElement("div",{style:{fontSize:9,color:"#475569",textTransform:"uppercase",letterSpacing:"0.08em",fontWeight:400}},x.l),
-              React.createElement("div",{style:{fontSize:12,fontWeight:400,color:"#cbd5e1",marginTop:4}},x.v)
-            )
-          )
-        ),
-        emp.incarnationCross&&React.createElement("div",{style:{padding:"10px 14px",borderRadius:12,...G.card,marginBottom:16}},
-          React.createElement("div",{style:{fontSize:9,color:"#475569",textTransform:"uppercase",letterSpacing:"0.08em",fontWeight:400}},"Incarnation Cross"),
-          React.createElement("div",{style:{fontSize:11,fontWeight:300,color:"#94a3b8",marginTop:4}},emp.incarnationCross)
-        ),
-        emp.birthdate&&React.createElement("div",{style:{padding:"10px 14px",borderRadius:12,background:"rgba(255,255,255,0.015)",marginTop:8}},
-          React.createElement("div",{style:{fontSize:9,color:"#334155",textTransform:"uppercase",letterSpacing:"0.08em",fontWeight:400}},"Birth Data"),
-          React.createElement("div",{style:{fontSize:11,color:"#475569",fontWeight:300,marginTop:4}},emp.birthdate+" \u00b7 "+emp.birthtime+" \u00b7 "+emp.birthplace)
-        )
-      );
-    }
+// ═══ ORG STRUCTURE TAB ═══
+function RoleTab({roles,ORG,addRole,updateRole,deleteRole,roleForm,setRoleForm,editingRole,setEditingRole,showAddRole,setShowAddRole}){
+  const cur=editingRole||roleForm;const setCur=editingRole?setEditingRole:setRoleForm;
+  return React.createElement(React.Fragment,null,
+    React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}},
+      React.createElement("div",null,
+        React.createElement("div",{style:{fontSize:18,fontWeight:400,color:"#f8fafc"}},"Org Structure"),
+        React.createElement("div",{style:{fontSize:12,color:"#64748b",fontWeight:300,marginTop:2}},"Add, edit, or remove roles. Chart updates instantly.")
+      ),
+      React.createElement("button",{onClick:()=>{setShowAddRole(!showAddRole);setEditingRole(null);},style:{padding:"10px 22px",borderRadius:14,...G.card,border:"1px solid "+(showAddRole?"rgba(248,113,113,0.2)":"rgba(56,189,248,0.2)"),color:showAddRole?"#f87171":"#38bdf8",fontWeight:400,fontSize:12}},showAddRole?"Cancel":"+ Add Role")
+    ),
 
-    function Admin({adminAuth,pw,setPw,pwErr,onPw,employees,addEmp,updateEmp,deleteEmp,editing,setEditing,showAdd,setShowAdd,form,setForm,autoCalc,loading}){
-      if(!adminAuth){
-        return React.createElement("div",{style:{display:"flex",justifyContent:"center",alignItems:"center",minHeight:"55vh"}},
-          React.createElement("div",{style:{width:360,padding:36,...G.panel}},
-            React.createElement("div",{style:{textAlign:"center",marginBottom:28}},
-              React.createElement("div",{style:{width:48,height:48,borderRadius:16,background:"rgba(56,189,248,0.08)",margin:"0 auto 14px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}},"\uD83D\uDD12"),
-              React.createElement("div",{style:{fontSize:18,fontWeight:400,color:"#f8fafc"}},"HR Admin"),
-              React.createElement("div",{style:{fontSize:12,color:"#64748b",fontWeight:300,marginTop:6}},"Enter password to continue")
-            ),
-            React.createElement("input",{type:"password",value:pw,onChange:e=>setPw(e.target.value),onKeyDown:e=>e.key==="Enter"&&onPw(),placeholder:"Password",style:{...G.input,marginBottom:12,textAlign:"center",fontSize:15,letterSpacing:"0.1em"}}),
-            pwErr&&React.createElement("div",{style:{fontSize:11,color:"#f87171",marginBottom:12,textAlign:"center",fontWeight:300}},"Incorrect password"),
-            React.createElement("button",{onClick:onPw,style:{width:"100%",padding:"12px 0",borderRadius:14,background:"linear-gradient(135deg,#38bdf8,#818cf8)",color:"#fff",fontSize:14,fontWeight:400}},"Unlock")
-          )
-        );
-      }
+    (showAddRole||editingRole)&&React.createElement("div",{style:{...G.panel,padding:24,marginBottom:24,animation:"fadeIn .4s ease"}},
+      React.createElement("div",{style:{fontSize:15,fontWeight:400,color:"#f8fafc",marginBottom:18}},editingRole?"Edit Role":"New Role"),
+      React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}},
+        React.createElement("div",null,React.createElement("label",{style:lbl},"Role Key (unique, no spaces)"),React.createElement("input",{value:cur.roleKey||"",onChange:e=>setCur({...cur,roleKey:e.target.value.toLowerCase().replace(/[^a-z0-9_]/g,"")}),placeholder:"e.g. dir_finance",style:G.inp,disabled:!!editingRole})),
+        React.createElement("div",null,React.createElement("label",{style:lbl},"Display Label"),React.createElement("input",{value:cur.label||"",onChange:e=>setCur({...cur,label:e.target.value}),placeholder:"e.g. Director of Finance",style:G.inp})),
+        React.createElement("div",null,React.createElement("label",{style:lbl},"Category (for Job-Fit scoring)"),React.createElement("select",{value:cur.category||"",onChange:e=>setCur({...cur,category:e.target.value}),style:G.sel},CATS.map(c=>React.createElement("option",{key:c,value:c},c)))),
+        React.createElement("div",null,React.createElement("label",{style:lbl},"Reports To (parent role)"),React.createElement("select",{value:cur.parentKey||"",onChange:e=>setCur({...cur,parentKey:e.target.value}),style:G.sel},React.createElement("option",{value:""},"\u2014 None (top level) \u2014"),roles.filter(r=>r.roleKey!==cur.roleKey).map(r=>React.createElement("option",{key:r.roleKey,value:r.roleKey},r.label))))
+      ),
+      React.createElement("button",{onClick:editingRole?updateRole:addRole,style:{padding:"10px 28px",borderRadius:12,background:"linear-gradient(135deg,#38bdf8,#818cf8)",color:"#fff",fontSize:12,fontWeight:500}},editingRole?"Save Role":"Add Role")
+    ),
 
-      const cur=editing||form;const setCur=editing?setEditing:setForm;
+    React.createElement("div",{style:{...G.panel,overflow:"hidden"}},
+      React.createElement("table",{style:{width:"100%",borderCollapse:"collapse"}},
+        React.createElement("thead",null,React.createElement("tr",{style:{borderBottom:"1px solid rgba(255,255,255,0.04)"}},
+          ["Key","Label","Category","Reports To",""].map(h=>React.createElement("th",{key:h,style:{padding:"14px 14px",textAlign:"left",fontSize:10,fontWeight:400,color:"#475569",letterSpacing:".1em",textTransform:"uppercase"}},h))
+        )),
+        React.createElement("tbody",null,roles.map(r=>React.createElement("tr",{key:r.roleKey,style:{borderBottom:"1px solid rgba(255,255,255,0.02)"}},
+          React.createElement("td",{style:{padding:"12px 14px",color:"#38bdf8",fontSize:12,fontWeight:400,fontFamily:"monospace"}},r.roleKey),
+          React.createElement("td",{style:{padding:"12px 14px",color:"#e2e8f0",fontSize:13,fontWeight:400}},r.label),
+          React.createElement("td",{style:{padding:"12px 14px",color:"#94a3b8",fontSize:11,fontWeight:300}},r.category),
+          React.createElement("td",{style:{padding:"12px 14px",color:"#64748b",fontSize:11,fontWeight:300}},r.parentKey?ORG[r.parentKey]?.label||r.parentKey:"\u2014 top level \u2014"),
+          React.createElement("td",{style:{padding:"12px 14px"}},React.createElement("div",{style:{display:"flex",gap:6}},
+            React.createElement("button",{onClick:()=>{setEditingRole({...r});setShowAddRole(false);},style:{padding:"5px 12px",borderRadius:10,...G.card,color:"#fbbf24",fontSize:10,border:"1px solid rgba(251,191,36,0.15)"}},"Edit"),
+            React.createElement("button",{onClick:()=>deleteRole(r.roleKey),style:{padding:"5px 10px",borderRadius:10,...G.card,color:"#f87171",fontSize:10,border:"1px solid rgba(248,113,113,0.15)"}},"\u00d7")
+          ))
+        )))
+      )
+    )
+  );
+}
 
-      return React.createElement("div",{style:{maxWidth:960,margin:"0 auto"}},
-        React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:24}},
-          React.createElement("div",null,
-            React.createElement("div",{style:{fontSize:20,fontWeight:400,color:"#f8fafc"}},"Employees"),
-            React.createElement("div",{style:{fontSize:12,color:"#64748b",fontWeight:300,marginTop:2}},employees.length+" registered")
-          ),
-          React.createElement("button",{onClick:()=>{setShowAdd(!showAdd);setEditing(null);},style:{padding:"10px 22px",borderRadius:14,...G.card,border:"1px solid "+(showAdd?"rgba(248,113,113,0.2)":"rgba(52,211,153,0.2)"),color:showAdd?"#f87171":"#34d399",fontWeight:400,fontSize:12}},showAdd?"Cancel":"+ Add Employee")
-        ),
-
-        (showAdd||editing)&&React.createElement("div",{style:{...G.panel,padding:24,marginBottom:24,animation:"fadeIn .4s ease"}},
-          React.createElement("div",{style:{fontSize:15,fontWeight:400,color:"#f8fafc",marginBottom:18}},editing?"Edit Employee":"New Employee"),
-          React.createElement("div",{style:{padding:18,borderRadius:16,background:"rgba(56,189,248,0.03)",border:"1px dashed rgba(56,189,248,0.12)",marginBottom:18}},
-            React.createElement("div",{style:{fontSize:11,fontWeight:400,color:"#38bdf8",marginBottom:14}},"Birth Data \u2014 auto-calculate via HD API"),
-            React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}},
-              React.createElement("div",null,React.createElement("label",{style:lbl},"Date"),React.createElement("input",{type:"date",value:cur.birthdate||"",onChange:e=>setCur({...cur,birthdate:e.target.value}),style:G.input})),
-              React.createElement("div",null,React.createElement("label",{style:lbl},"Time"),React.createElement("input",{type:"time",value:cur.birthtime||"12:00",onChange:e=>setCur({...cur,birthtime:e.target.value}),style:G.input})),
-              React.createElement("div",null,React.createElement("label",{style:lbl},"Place"),React.createElement("input",{value:cur.birthplace||"",onChange:e=>setCur({...cur,birthplace:e.target.value}),placeholder:"e.g. Jakarta",style:G.input}))
-            ),
-            React.createElement("button",{onClick:()=>autoCalc(cur,setCur),disabled:loading,style:{marginTop:14,padding:"8px 20px",borderRadius:12,background:"linear-gradient(135deg,#38bdf8,#34d399)",color:"#0f172a",fontSize:12,fontWeight:500,opacity:loading?.5:1}},loading?"Calculating...":"Auto-Calculate HD Chart")
-          ),
-          React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}},
-            React.createElement("div",null,React.createElement("label",{style:lbl},"Full Name"),React.createElement("input",{value:cur.name||"",onChange:e=>setCur({...cur,name:e.target.value}),style:G.input})),
-            React.createElement("div",null,React.createElement("label",{style:lbl},"Type"),React.createElement("select",{value:cur.type||"",onChange:e=>setCur({...cur,type:e.target.value}),style:G.select},React.createElement("option",{value:""},"\u2014 select \u2014"),TYPES.map(t=>React.createElement("option",{key:t,value:t},t)))),
-            React.createElement("div",null,React.createElement("label",{style:lbl},"Profile"),React.createElement("select",{value:cur.profile||"",onChange:e=>setCur({...cur,profile:e.target.value}),style:G.select},React.createElement("option",{value:""},"\u2014 auto \u2014"),PROFILES.map(p=>React.createElement("option",{key:p,value:p},p)))),
-            React.createElement("div",null,React.createElement("label",{style:lbl},"Authority"),React.createElement("select",{value:cur.authority||"",onChange:e=>setCur({...cur,authority:e.target.value}),style:G.select},React.createElement("option",{value:""},"\u2014 auto \u2014"),AUTHS.map(a=>React.createElement("option",{key:a,value:a},a)))),
-            React.createElement("div",null,React.createElement("label",{style:lbl},"Strategy"),React.createElement("input",{value:cur.strategy||"",onChange:e=>setCur({...cur,strategy:e.target.value}),style:G.input})),
-            React.createElement("div",null,React.createElement("label",{style:lbl},"Definition"),React.createElement("input",{value:cur.definition||"",onChange:e=>setCur({...cur,definition:e.target.value}),style:G.input}))
-          ),
-          cur.incarnationCross&&React.createElement("div",{style:{padding:"8px 14px",borderRadius:12,...G.card,marginBottom:14,fontSize:11,color:"#fbbf24",fontWeight:300}},"Cross: "+cur.incarnationCross),
-          React.createElement("button",{onClick:editing?updateEmp:addEmp,style:{padding:"10px 28px",borderRadius:12,background:"linear-gradient(135deg,#34d399,#38bdf8)",color:"#0f172a",fontSize:12,fontWeight:500}},editing?"Save Changes":"Add Employee")
-        ),
-
-        React.createElement("div",{style:{...G.panel,overflow:"hidden"}},
-          React.createElement("table",{style:{width:"100%",borderCollapse:"collapse"}},
-            React.createElement("thead",null,React.createElement("tr",{style:{borderBottom:"1px solid rgba(255,255,255,0.04)"}},
-              ["Name","Type","Profile","Authority","Strategy","Role",""].map(h=>React.createElement("th",{key:h,style:{padding:"14px 16px",textAlign:"left",fontSize:10,fontWeight:400,color:"#475569",letterSpacing:"0.1em",textTransform:"uppercase"}},h))
-            )),
-            React.createElement("tbody",null,
-              employees.map((e,i)=>React.createElement("tr",{key:e.id,style:{borderBottom:"1px solid rgba(255,255,255,0.02)"}},
-                React.createElement("td",{style:{padding:"14px 16px",fontWeight:400,color:"#e2e8f0",fontSize:13}},e.name),
-                React.createElement("td",{style:{padding:"14px 16px"}},React.createElement("span",{style:{fontSize:10,fontWeight:500,padding:"3px 10px",borderRadius:8,background:(TB[e.type]?.c||"#666")+"10",color:TB[e.type]?.c}},e.type)),
-                React.createElement("td",{style:{padding:"14px 16px",color:"#94a3b8",fontSize:12,fontWeight:300}},e.profile),
-                React.createElement("td",{style:{padding:"14px 16px",color:"#94a3b8",fontSize:12,fontWeight:300}},e.authority),
-                React.createElement("td",{style:{padding:"14px 16px",color:"#64748b",fontSize:11,fontWeight:300}},e.strategy||"\u2014"),
-                React.createElement("td",{style:{padding:"14px 16px",color:"#64748b",fontSize:11,fontWeight:300}},e.assignedRole?ORG[e.assignedRole]?.label:"\u2014"),
-                React.createElement("td",{style:{padding:"14px 16px"}},
-                  React.createElement("div",{style:{display:"flex",gap:6}},
-                    React.createElement("button",{onClick:()=>{setEditing({...e});setShowAdd(false);},style:{padding:"5px 12px",borderRadius:10,...G.card,color:"#fbbf24",fontSize:10,fontWeight:400,border:"1px solid rgba(251,191,36,0.15)"}},"Edit"),
-                    React.createElement("button",{onClick:()=>deleteEmp(e.id),style:{padding:"5px 10px",borderRadius:10,...G.card,color:"#f87171",fontSize:10,fontWeight:400,border:"1px solid rgba(248,113,113,0.15)"}},"\u00d7")
-                  )
-                )
-              ))
-            )
-          )
-        )
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
-  </script>
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
 </body>
 </html>
