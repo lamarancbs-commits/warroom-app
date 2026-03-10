@@ -142,18 +142,13 @@ const HD={
   async calc(bd,bt,bp){
     try{
       const[y,m,d]=bd.split("-").map(Number);const[h,mi]=(bt||"12:00").split(":").map(Number);
-      // Use GAS proxy to bypass CORS
-      const r=await fetch(CFG.GAS,{method:"POST",body:JSON.stringify({action:"hdCalc",year:y,month:m,day:d,hour:h,minute:mi,city:bp})});
+      // Use GAS doGet proxy — GET requests don't have CORS issues with GAS
+      const url=CFG.GAS+"?action=hdCalc&year="+y+"&month="+m+"&day="+d+"&hour="+h+"&minute="+mi+"&city="+encodeURIComponent(bp);
+      const r=await fetch(url);
       const j=await r.json();
       if(j.success&&j.hdData)return j.hdData;
-      return null;
+      console.warn("HD proxy error:",j.error);return null;
     }catch(e){console.warn("HD calc error:",e);return null;}
-  },
-  async checkHealth(){
-    try{
-      const r=await fetch(CFG.GAS,{method:"POST",body:JSON.stringify({action:"hdHealth"})});
-      const j=await r.json();return j.success&&j.status==="connected";
-    }catch(e){return false;}
   },
   parse(d){if(!d)return{};const g=d.general||{};let pr=g.profile||"";if(pr.includes(":"))pr=pr.split(":")[0].trim();let au=g.inner_authority||"";au=au.replace(/ [Aa]uthority/,"").trim();const ch=(d.channels?.Channels||[]).map(c=>c.channel||c);const pg=(d.gates?.prs?.Planets||[]).map(p=>p.Gate);const dg=(d.gates?.des?.Planets||[]).map(p=>p.Gate);return{type:g.energy_type||"",profile:pr,authority:au,strategy:g.strategy||"",definition:g.definition||"",incarnationCross:g.inc_cross||"",centers:g.defined_centers||[],channels:ch,gates:[...new Set([...pg,...dg])].sort((a,b)=>a-b)};}
 };
