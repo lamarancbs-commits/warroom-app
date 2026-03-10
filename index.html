@@ -139,8 +139,22 @@ const SC={green:"#34d399",yellow:"#fbbf24",red:"#f87171",gray:"#6b7280"};
 const TB={"Manifestor":{c:"#f87171",s:"MAN"},"Generator":{c:"#34d399",s:"GEN"},"Manifesting Generator":{c:"#38bdf8",s:"MG"},"Projector":{c:"#fbbf24",s:"PRJ"},"Reflector":{c:"#c084fc",s:"REF"}};
 
 const HD={
-  bp(bd,bt,bp){const[y,m,d]=bd.split("-").map(Number);const[h,mi]=(bt||"12:00").split(":").map(Number);return"year="+y+"&month="+m+"&day="+d+"&hour="+h+"&minute="+mi+"&city="+encodeURIComponent(bp);},
-  async calc(bd,bt,bp){try{const r=await fetch(CFG.API+"/calculate?"+this.bp(bd,bt,bp),{headers:{"Authorization":"Bearer "+CFG.TOK}});if(!r.ok)throw 0;return await r.json();}catch(e){return null;}},
+  async calc(bd,bt,bp){
+    try{
+      const[y,m,d]=bd.split("-").map(Number);const[h,mi]=(bt||"12:00").split(":").map(Number);
+      // Use GAS proxy to bypass CORS
+      const r=await fetch(CFG.GAS,{method:"POST",body:JSON.stringify({action:"hdCalc",year:y,month:m,day:d,hour:h,minute:mi,city:bp})});
+      const j=await r.json();
+      if(j.success&&j.hdData)return j.hdData;
+      return null;
+    }catch(e){console.warn("HD calc error:",e);return null;}
+  },
+  async checkHealth(){
+    try{
+      const r=await fetch(CFG.GAS,{method:"POST",body:JSON.stringify({action:"hdHealth"})});
+      const j=await r.json();return j.success&&j.status==="connected";
+    }catch(e){return false;}
+  },
   parse(d){if(!d)return{};const g=d.general||{};let pr=g.profile||"";if(pr.includes(":"))pr=pr.split(":")[0].trim();let au=g.inner_authority||"";au=au.replace(/ [Aa]uthority/,"").trim();const ch=(d.channels?.Channels||[]).map(c=>c.channel||c);const pg=(d.gates?.prs?.Planets||[]).map(p=>p.Gate);const dg=(d.gates?.des?.Planets||[]).map(p=>p.Gate);return{type:g.energy_type||"",profile:pr,authority:au,strategy:g.strategy||"",definition:g.definition||"",incarnationCross:g.inc_cross||"",centers:g.defined_centers||[],channels:ch,gates:[...new Set([...pg,...dg])].sort((a,b)=>a-b)};}
 };
 
