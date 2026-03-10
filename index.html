@@ -1,501 +1,535 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>War Room · Human Design</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100;9..40,200;9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.9/babel.min.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',-apple-system,sans-serif;background:#0c0f1a;overflow-x:hidden}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:2px}
-button{font-family:inherit;cursor:pointer;border:none;background:none}button:hover{filter:brightness(1.1)}
-input:focus,select:focus{border-color:rgba(56,189,248,0.3)!important;outline:none}
-@keyframes fadeDown{from{opacity:0;transform:translateX(-50%) translateY(-12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes softPulse{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,0.15)}50%{box-shadow:0 0 0 8px rgba(52,211,153,0)}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Human Design Executive War Room</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#121a2f;
+      --panel2:#0f172a;
+      --line:#24304a;
+      --text:#edf2ff;
+      --muted:#9aa7c2;
+      --green:#10b981;
+      --yellow:#f59e0b;
+      --red:#ef4444;
+      --blue:#38bdf8;
+      --purple:#a855f7;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,Arial,sans-serif;
+      background:linear-gradient(180deg,#09111f,#08101c 40%,#070d18);
+      color:var(--text);
+    }
+    .container{max-width:1400px;margin:0 auto;padding:24px}
+    .header,.panel,.card,.node,.table-wrap,.sidebar-card{
+      background:rgba(18,26,47,.92);
+      border:1px solid rgba(154,167,194,.15);
+      box-shadow:0 20px 40px rgba(0,0,0,.25);
+      border-radius:18px;
+    }
+    .header{padding:24px;margin-bottom:20px}
+    .title{font-size:30px;font-weight:800;margin:6px 0}
+    .subtitle{color:var(--muted);font-size:14px;line-height:1.6}
+    .top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+    .btn{
+      border:none;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;
+      background:#1f2a44;color:#fff
+    }
+    .btn:hover{opacity:.9}
+    .btn-primary{background:var(--blue);color:#04111f}
+    .btn-purple{background:var(--purple)}
+    .btn-danger{background:#7f1d1d}
+    .btn-success{background:#0f766e}
+    .btn-muted{background:#1f2937}
+    .grid{
+      display:grid;
+      grid-template-columns:320px 1fr;
+      gap:20px;
+    }
+    .panel{padding:18px}
+    .sidebar-title,.section-title{font-size:20px;font-weight:800;margin:0}
+    .muted{color:var(--muted)}
+    .small{font-size:12px}
+    .badge{
+      display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700
+    }
+    .green{background:rgba(16,185,129,.15);color:#9ff5d1;border:1px solid rgba(16,185,129,.35)}
+    .yellow{background:rgba(245,158,11,.15);color:#ffe1a0;border:1px solid rgba(245,158,11,.35)}
+    .red{background:rgba(239,68,68,.15);color:#ffb0b0;border:1px solid rgba(239,68,68,.35)}
+    .gray{background:rgba(148,163,184,.15);color:#cbd5e1;border:1px solid rgba(148,163,184,.35)}
+    .sidebar-card{padding:14px;margin-top:12px}
+    .sidebar-card h4{margin:0 0 6px 0;font-size:15px}
+    .sidebar-card p{margin:4px 0;color:var(--muted);font-size:13px}
+    .org{padding:16px}
+    .org-grid-top{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:16px
+    }
+    .org-grid-bottom{
+      display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-top:18px
+    }
+    .node{
+      padding:14px;min-height:220px;position:relative;border:2px solid #334155
+    }
+    .node.green-border{border-color:var(--green)}
+    .node.yellow-border{border-color:var(--yellow)}
+    .node.red-border{border-color:var(--red)}
+    .node h3{margin:0;font-size:18px}
+    .node .role{margin:4px 0 10px 0;color:#7dd3fc;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+    .node .line{font-size:13px;color:var(--muted);margin:5px 0}
+    .node .score{margin-top:10px}
+    .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+    .card{padding:16px}
+    .card h4{margin:0 0 8px 0}
+    .form-grid{
+      display:grid;grid-template-columns:repeat(2,1fr);gap:12px
+    }
+    .input,select{
+      width:100%;padding:12px;border-radius:12px;border:1px solid rgba(154,167,194,.18);
+      background:#0b1327;color:white
+    }
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .table-wrap{padding:16px;overflow:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{padding:10px;border-bottom:1px solid rgba(154,167,194,.12);text-align:left;vertical-align:top}
+    th{color:#9fb3d9}
+    tr:hover{background:rgba(255,255,255,.02)}
+    .hidden{display:none}
+    .flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap}
+    @media(max-width:1100px){
+      .grid{grid-template-columns:1fr}
+      .org-grid-top{grid-template-columns:1fr}
+      .org-grid-bottom{grid-template-columns:1fr}
+      .kpi-row{grid-template-columns:1fr}
+      .form-grid{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const{useState,useEffect,useCallback,useMemo}=React;
+  <div class="container">
+    <div class="header">
+      <div class="top-row">
+        <div>
+          <div class="small muted">Human Design Executive War Room</div>
+          <div class="title">Payment Solution Org Mapping</div>
+          <div class="subtitle">
+            Dashboard organisasi + job fit + chemistry karyawan berbasis Human Design.
+          </div>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-primary" onclick="switchView('dashboard')">War Room Dashboard</button>
+          <button class="btn btn-purple" onclick="switchView('admin')">HR Admin Panel</button>
+          <button class="btn btn-success" onclick="loadEmployees()">Refresh</button>
+          <button class="btn btn-muted" onclick="recomputeAll()">Recompute</button>
+        </div>
+      </div>
+    </div>
 
-const CFG={
-  GAS:"https://script.google.com/macros/s/AKfycbxbHiFFEI3PpoMStydb32zfRj5pDw69QmCn_-Z64NUc7zGGU43IR4Wj49EqMX84IKsJ/exec",
-  API:"https://humandesign-api-5qh4.onrender.com",
-  TOK:"warroom2024secret",PW:"HRADMIN123",
-};
+    <div id="dashboardView">
+      <div class="grid">
+        <div class="panel">
+          <div class="flex" style="justify-content:space-between">
+            <div>
+              <div class="small muted">Sidebar</div>
+              <h2 class="sidebar-title">Bench / Unassigned</h2>
+            </div>
+            <span id="benchCount" class="badge gray">0</span>
+          </div>
+          <div id="benchList"></div>
+        </div>
 
-const D_ROLES=[
-  {roleKey:"ceo",label:"CEO \u00b7 Visionary",category:"CEO/Visionary",parentKey:""},
-  {roleKey:"vp_marketing",label:"VP Marketing",category:"Marketing/Sales",parentKey:"ceo"},
-  {roleKey:"vp_ops",label:"VP Operations",category:"Operations",parentKey:"ceo"},
-  {roleKey:"mgr_sales",label:"Sales Manager",category:"Marketing/Sales",parentKey:"vp_marketing"},
-  {roleKey:"mgr_support",label:"Support Manager",category:"Operations",parentKey:"vp_ops"},
-  {roleKey:"staff_sales1",label:"Sales Rep",category:"Marketing/Sales",parentKey:"mgr_sales"},
-  {roleKey:"staff_creative1",label:"Creative Lead",category:"Creative",parentKey:"vp_marketing"},
-];
-const D_EMPS=[
-  {id:"1",name:"Rina Hartono",birthdate:"1985-03-15",birthtime:"14:30",birthplace:"Jakarta",type:"Manifestor",profile:"1/3",authority:"Emotional",strategy:"To Inform",definition:"Single",incarnationCross:"Right Angle Cross of Eden",assignedRole:"ceo",centers:["Ajna","Throat","G_Center"],channels:["12/22"],gates:[7,10,12,21,22,31]},
-  {id:"2",name:"Budi Santoso",birthdate:"1990-07-22",birthtime:"08:15",birthplace:"Surabaya",type:"Projector",profile:"4/6",authority:"Splenic",strategy:"Wait for Invitation",definition:"Split",incarnationCross:"Left Angle Cross of Confrontation",assignedRole:"vp_marketing",centers:["Ajna","Throat","Spleen","G_Center"],channels:["11/56","57/20"],gates:[11,20,35,44,56,57]},
-  {id:"3",name:"Dewi Lestari",birthdate:"1988-11-03",birthtime:"23:45",birthplace:"Bandung",type:"Generator",profile:"2/4",authority:"Sacral",strategy:"Wait to Respond",definition:"Single",incarnationCross:"Right Angle Cross of Planning",assignedRole:"vp_ops",centers:["Sacral","Root","Spleen"],channels:["9/52","50/27"],gates:[5,9,18,27,48,50,52,58]},
-  {id:"4",name:"Agus Prasetyo",birthdate:"1992-01-18",birthtime:"06:00",birthplace:"Yogyakarta",type:"Manifesting Generator",profile:"3/5",authority:"Emotional",strategy:"Wait to Respond & Inform",definition:"Triple Split",incarnationCross:"Juxtaposition Cross of Formulization",assignedRole:"mgr_sales",centers:["Sacral","Throat","Solar Plexus","Root"],channels:["35/36","3/60"],gates:[3,12,22,26,35,36,45,60]},
-  {id:"5",name:"Siti Nurhaliza",birthdate:"1995-05-30",birthtime:"16:20",birthplace:"Semarang",type:"Generator",profile:"5/1",authority:"Sacral",strategy:"Wait to Respond",definition:"Single",incarnationCross:"Right Angle Cross of Consciousness",assignedRole:"mgr_support",centers:["Sacral","Root","G_Center"],channels:["5/15","42/53"],gates:[5,9,15,42,48,52,53,58]},
-  {id:"6",name:"Fajar Nugroho",birthdate:"1993-09-12",birthtime:"11:00",birthplace:"Medan",type:"Generator",profile:"6/2",authority:"Sacral",strategy:"Wait to Respond",definition:"Single",incarnationCross:"Right Angle Cross of Eden",assignedRole:"staff_sales1",centers:["Sacral","Throat","Solar Plexus"],channels:["12/22","36/35"],gates:[12,22,26,35,36,45]},
-  {id:"7",name:"Maya Indah",birthdate:"1991-12-25",birthtime:"03:30",birthplace:"Denpasar",type:"Projector",profile:"4/1",authority:"Self-Projected",strategy:"Wait for Invitation",definition:"Split",incarnationCross:"Left Angle Cross of Revolution",assignedRole:"staff_creative1",centers:["Head","Ajna","Throat","G_Center"],channels:["11/56","43/23","1/8"],gates:[1,8,11,23,43,47,56,62,64]},
-  {id:"8",name:"Reza Firmansyah",birthdate:"1994-06-08",birthtime:"20:00",birthplace:"Makassar",type:"Reflector",profile:"2/5",authority:"Lunar",strategy:"Wait a Lunar Cycle",definition:"None",incarnationCross:"Right Angle Cross of Rulership",assignedRole:"",centers:[],channels:[],gates:[15,25,46]},
-  {id:"9",name:"Putri Ayu",birthdate:"1996-02-14",birthtime:"09:45",birthplace:"Malang",type:"Manifesting Generator",profile:"3/6",authority:"Emotional",strategy:"Wait to Respond & Inform",definition:"Single",incarnationCross:"Juxtaposition Cross of Fates",assignedRole:"",centers:["Sacral","Throat","Solar Plexus","Root"],channels:["3/60","22/12"],gates:[3,12,22,26,35,36,60]},
-];
-const D_CRIT=[
-  {category:"CEO/Visionary",requiredCenters:"Throat,G_Center",preferredCenters:"Head,Heart",goodTypes:"Manifestor,Projector",goodProfiles:"5/1,3/5,6/2,1/3",goodAuthorities:"Emotional,Splenic",keyGates:"7,31,1,10,21",weight_centers:"30",weight_type:"25",weight_profile:"15",weight_gates:"20",weight_authority:"10",description:"Memimpin visi. Throat + G Center."},
-  {category:"Marketing/Sales",requiredCenters:"Throat,Solar Plexus",preferredCenters:"G_Center,Sacral",goodTypes:"Manifesting Generator,Generator,Manifestor",goodProfiles:"3/5,3/6,4/6,5/1",goodAuthorities:"Emotional,Sacral",keyGates:"12,35,45,22,36,26",weight_centers:"25",weight_type:"20",weight_profile:"15",weight_gates:"25",weight_authority:"15",description:"Komunikasi & persuasi."},
-  {category:"Operations",requiredCenters:"Sacral,Root",preferredCenters:"Spleen",goodTypes:"Generator,Manifesting Generator",goodProfiles:"1/3,2/4,6/2",goodAuthorities:"Sacral,Splenic",keyGates:"9,5,52,58,18,48,50",weight_centers:"30",weight_type:"25",weight_profile:"10",weight_gates:"25",weight_authority:"10",description:"Konsistensi & eksekusi."},
-  {category:"Creative",requiredCenters:"Head,Ajna",preferredCenters:"Throat,G_Center",goodTypes:"Manifestor,Projector,Manifesting Generator",goodProfiles:"1/3,3/5,4/1",goodAuthorities:"Self-Projected,Splenic,Emotional",keyGates:"11,43,23,1,8,62,64,47",weight_centers:"30",weight_type:"20",weight_profile:"15",weight_gates:"25",weight_authority:"10",description:"Ide & inovasi."},
-  {category:"Finance",requiredCenters:"Ajna,Spleen",preferredCenters:"Root,Heart",goodTypes:"Generator,Projector",goodProfiles:"1/3,1/4,5/1,6/2",goodAuthorities:"Splenic,Emotional",keyGates:"18,48,57,50,32,14,44",weight_centers:"30",weight_type:"20",weight_profile:"15",weight_gates:"25",weight_authority:"10",description:"Logika & penilaian risiko."},
-  {category:"Engineering",requiredCenters:"Sacral,Ajna",preferredCenters:"Root,Throat",goodTypes:"Generator,Manifesting Generator",goodProfiles:"1/3,1/4,3/5",goodAuthorities:"Sacral,Splenic",keyGates:"9,52,58,38,48,18,62",weight_centers:"30",weight_type:"25",weight_profile:"10",weight_gates:"25",weight_authority:"10",description:"Fokus & membangun."},
-  {category:"HR",requiredCenters:"G_Center,Solar Plexus",preferredCenters:"Spleen,Throat",goodTypes:"Projector,Generator",goodProfiles:"2/4,4/6,4/1",goodAuthorities:"Emotional,Splenic",keyGates:"25,46,15,10,44,22,36",weight_centers:"30",weight_type:"20",weight_profile:"20",weight_gates:"20",weight_authority:"10",description:"Empati & membaca orang."},
-  {category:"Product",requiredCenters:"Ajna,G_Center",preferredCenters:"Throat,Head",goodTypes:"Projector,Manifesting Generator",goodProfiles:"3/5,3/6,5/1",goodAuthorities:"Splenic,Self-Projected",keyGates:"43,23,4,64,11,7,31",weight_centers:"30",weight_type:"20",weight_profile:"15",weight_gates:"25",weight_authority:"10",description:"Visi produk & big picture."},
-];
+        <div>
+          <div class="kpi-row">
+            <div class="card">
+              <h4>Average Job Fit</h4>
+              <div id="avgJobFit" class="title" style="font-size:28px">-</div>
+              <div class="muted small">Rata-rata kecocokan penempatan</div>
+            </div>
+            <div class="card">
+              <h4>Average Manager Chemistry</h4>
+              <div id="avgManagerChem" class="title" style="font-size:28px">-</div>
+              <div class="muted small">Rata-rata chemistry ke atasan</div>
+            </div>
+            <div class="card">
+              <h4>Average Team Chemistry</h4>
+              <div id="avgTeamChem" class="title" style="font-size:28px">-</div>
+              <div class="muted small">Rata-rata chemistry tim</div>
+            </div>
+          </div>
 
-const TYPES=["Manifestor","Generator","Manifesting Generator","Projector","Reflector"];
-const PROFILES=["1/3","1/4","2/4","2/5","3/5","3/6","4/1","4/6","5/1","5/2","6/2","6/3"];
-const AUTHS=["Emotional","Sacral","Splenic","Ego","Self-Projected","Mental/None","Lunar"];
-const CATS=["CEO/Visionary","Marketing/Sales","Operations","Creative","Finance","HR","Engineering","Product","Other"];
+          <div class="panel org">
+            <div class="small muted">Main Area</div>
+            <h2 class="section-title">The War Room</h2>
 
-// ═══════════════════════════════════════════════════════════
-// SCORING ENGINE — weighted job-fit based on JobCriteria
-// ═══════════════════════════════════════════════════════════
-function calcScore(emp,cat,criteria){
-  if(!emp||!cat)return{score:0,color:"gray",details:{}};
-  const crit=criteria.find(c=>c.category===cat);
-  if(!crit)return{score:0,color:"gray",details:{note:"No criteria for "+cat}};
+            <div class="org-grid-top" id="orgTop"></div>
+            <div class="org-grid-bottom" id="orgBottom"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  const parse=s=>(s||"").split(",").map(x=>x.trim()).filter(Boolean);
-  const reqC=parse(crit.requiredCenters);const prefC=parse(crit.preferredCenters);
-  const gTypes=parse(crit.goodTypes);const gProf=parse(crit.goodProfiles);
-  const gAuth=parse(crit.goodAuthorities);const kGates=parse(crit.keyGates).map(Number);
-  const wC=Number(crit.weight_centers)||30;const wT=Number(crit.weight_type)||25;
-  const wP=Number(crit.weight_profile)||15;const wG=Number(crit.weight_gates)||20;const wA=Number(crit.weight_authority)||10;
-  const totalW=wC+wT+wP+wG+wA;
+    <div id="adminView" class="hidden">
+      <div class="grid">
+        <div class="panel">
+          <div class="small muted">HR Admin Panel</div>
+          <h2 class="section-title">Employee Form</h2>
 
-  const empCenters=Array.isArray(emp.centers)?emp.centers:parse(typeof emp.centers==="string"?emp.centers:"");
-  const empGates=Array.isArray(emp.gates)?emp.gates.map(Number):parse(typeof emp.gates==="string"?emp.gates:"").map(Number);
+          <div class="form-grid" style="margin-top:14px">
+            <div>
+              <label>Name</label>
+              <input id="name" class="input" />
+            </div>
+            <div>
+              <label>Birth Date</label>
+              <input id="birthDate" type="date" class="input" />
+            </div>
+            <div>
+              <label>Birth Time</label>
+              <input id="birthTime" type="time" class="input" />
+            </div>
+            <div>
+              <label>Birth Place</label>
+              <input id="birthPlace" class="input" placeholder="Jakarta, Indonesia" />
+            </div>
+            <div>
+              <label>Job Role</label>
+              <select id="jobRole"></select>
+            </div>
+            <div>
+              <label>Department</label>
+              <input id="department" class="input" placeholder="Commercial / Tech / Compliance" />
+            </div>
+            <div>
+              <label>Manager</label>
+              <select id="managerId"></select>
+            </div>
+            <div>
+              <label>Assigned Role</label>
+              <select id="assignedRole"></select>
+            </div>
 
-  // Centers score
-  let cMatch=0;const cTotal=reqC.length+prefC.length*0.5;
-  const cHits=[];const cMiss=[];
-  reqC.forEach(c=>{if(empCenters.includes(c)){cMatch+=1;cHits.push(c);}else cMiss.push(c);});
-  prefC.forEach(c=>{if(empCenters.includes(c)){cMatch+=0.5;cHits.push(c+"*");}});
-  const centerScore=cTotal>0?Math.min((cMatch/cTotal)*100,100):50;
+            <div>
+              <label>HD Type</label>
+              <select id="hdType">
+                <option value="">Auto/API</option>
+                <option>Manifestor</option>
+                <option>Generator</option>
+                <option>Manifesting Generator</option>
+                <option>Projector</option>
+                <option>Reflector</option>
+              </select>
+            </div>
+            <div>
+              <label>HD Profile</label>
+              <input id="hdProfile" class="input" placeholder="e.g. 4/6" />
+            </div>
+            <div>
+              <label>HD Authority</label>
+              <select id="hdAuthority">
+                <option value="">Auto/API</option>
+                <option>Emotional</option>
+                <option>Sacral</option>
+                <option>Splenic</option>
+                <option>Self-Projected</option>
+                <option>Ego</option>
+                <option>Lunar</option>
+              </select>
+            </div>
+            <div>
+              <label>Bodygraph URL</label>
+              <input id="bodygraphUrl" class="input" placeholder="optional" />
+            </div>
+          </div>
 
-  // Type score
-  const typeMatch=gTypes.includes(emp.type);const typeScore=typeMatch?100:25;
+          <div class="actions">
+            <button class="btn btn-primary" onclick="saveEmployee()">Save</button>
+            <button class="btn btn-muted" onclick="resetForm()">Clear</button>
+          </div>
+        </div>
 
-  // Profile score
-  const profMatch=gProf.includes(emp.profile);const profScore=profMatch?100:30;
+        <div class="table-wrap">
+          <div class="small muted">Employee Registry</div>
+          <h2 class="section-title">All Employees</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Role</th>
+                <th>HD</th>
+                <th>Job Fit</th>
+                <th>Mgr Chem</th>
+                <th>Team Chem</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="employeeTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  // Gates score
-  let gMatch=0;const gHits=[];
-  kGates.forEach(g=>{if(empGates.includes(g)){gMatch++;gHits.push(g);}});
-  const gateScore=kGates.length>0?Math.min((gMatch/kGates.length)*100,100):50;
+  <script>
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwEwKhk_W82C6MN_4b2L_162P57Z6t8V_dm0mnk5uhu_ZSGg4Qk2cQQ6IfVo9w6_raRtA/exec';
+    const ADMIN_PASSWORD = 'HRADMIN123';
 
-  // Authority score
-  const authMatch=gAuth.includes(emp.authority);const authScore=authMatch?100:40;
+    const ROLE_ORDER_TOP = ['CEO', 'HR', 'Product Manager'];
+    const ROLE_ORDER_BOTTOM = ['Finance', 'IT', 'Regulatory', 'Marketing', 'Sales', 'Staff'];
 
-  const total=Math.round((centerScore*wC+typeScore*wT+profScore*wP+gateScore*wG+authScore*wA)/totalW);
-  const color=total>=75?"green":total>=45?"yellow":"red";
+    let employees = [];
+    let roles = [];
+    let editingId = '';
 
-  return{score:total,color,details:{
-    centers:{score:Math.round(centerScore),hits:cHits,miss:cMiss,weight:wC},
-    type:{score:Math.round(typeScore),match:typeMatch,weight:wT},
-    profile:{score:Math.round(profScore),match:profMatch,weight:wP},
-    gates:{score:Math.round(gateScore),hits:gHits,total:kGates.length,weight:wG},
-    authority:{score:Math.round(authScore),match:authMatch,weight:wA},
-    description:crit.description||""
-  }};
-}
+    async function apiPost(payload) {
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      return await res.json();
+    }
 
-// Vertical relationship
-function vertRel(b,s){if(!b||!s)return{color:"gray",reason:""};const bt=b.type,st=s.type;
-  if(bt==="Projector"&&(st==="Generator"||st==="Manifesting Generator"))return{color:"green",reason:"Guide + Builder: Projector mengarahkan energi "+st};
-  if((bt==="Generator"||bt==="Manifesting Generator")&&st==="Manifestor")return{color:"red",reason:"Risiko micromanagement: "+bt+" memimpin Manifestor"};
-  if(bt==="Manifestor"&&st==="Projector")return{color:"yellow",reason:"Pace mismatch: Manifestor cepat, Projector butuh undangan"};
-  if(bt==="Manifestor"&&(st==="Generator"||st==="Manifesting Generator"))return{color:"green",reason:"Initiator + Responder: Manifestor memulai, "+st+" mengeksekusi"};
-  if(bt==="Projector"&&st==="Projector")return{color:"yellow",reason:"Dua guide tanpa builder: perlu Generator di tim"};
-  if(bt==="Projector"&&st==="Manifestor")return{color:"yellow",reason:"Guide + Initiator: bisa konflik soal arah"};
-  return{color:"gray",reason:"Netral"};}
+    async function apiGet() {
+      const res = await fetch(GAS_URL);
+      return await res.json();
+    }
 
-// Team synergy
-function teamSyn(arr){if(!arr||arr.length<2)return{c:"gray",l:"",r:""};const cn={};arr.forEach(e=>{cn[e.type]=(cn[e.type]||0)+1});const g=(cn["Generator"]||0)+(cn["Manifesting Generator"]||0),m=cn["Manifestor"]||0,p=cn["Projector"]||0;
-  if(g>=3)return{c:"green",l:"Sacral Synergy",r:g+" Generator/MG = energi sacral saling menguatkan"};
-  if(m>=2)return{c:"red",l:"Power Struggle",r:m+" Manifestor = potensi konflik inisiasi"};
-  if(p>=1&&g>=2)return{c:"green",l:"Balanced",r:"Projector sebagai guide + "+g+" Generator sebagai builder"};
-  if(g===0&&arr.length>=2)return{c:"red",l:"Low Energy",r:"Tidak ada Generator/MG = kurang energi eksekusi"};
-  return{c:"yellow",l:"Mixed",r:"Komposisi campuran, perlu perhatian"};}
+    function switchView(view) {
+      if (view === 'admin') {
+        const entered = prompt('Enter HR Admin password');
+        if (entered !== ADMIN_PASSWORD) {
+          alert('Wrong password');
+          return;
+        }
+      }
+      document.getElementById('dashboardView').classList.toggle('hidden', view !== 'dashboard');
+      document.getElementById('adminView').classList.toggle('hidden', view !== 'admin');
+    }
 
-const SC={green:"#34d399",yellow:"#fbbf24",red:"#f87171",gray:"#6b7280"};
-const TB={"Manifestor":{c:"#f87171",s:"MAN"},"Generator":{c:"#34d399",s:"GEN"},"Manifesting Generator":{c:"#38bdf8",s:"MG"},"Projector":{c:"#fbbf24",s:"PRJ"},"Reflector":{c:"#c084fc",s:"REF"}};
+    function scoreBadge(score) {
+      if (score === '' || score === null || score === undefined) return '<span class="badge gray">-</span>';
+      const s = Number(score);
+      if (s >= 75) return `<span class="badge green">${s}%</span>`;
+      if (s >= 50) return `<span class="badge yellow">${s}%</span>`;
+      return `<span class="badge red">${s}%</span>`;
+    }
 
-const HD={
-  async calc(bd,bt,bp){
-    try{
-      const[y,m,d]=bd.split("-").map(Number);const[h,mi]=(bt||"12:00").split(":").map(Number);
-      // Use GAS doGet proxy — GET requests don't have CORS issues with GAS
-      const url=CFG.GAS+"?action=hdCalc&year="+y+"&month="+m+"&day="+d+"&hour="+h+"&minute="+mi+"&city="+encodeURIComponent(bp);
-      const r=await fetch(url);
-      const j=await r.json();
-      if(j.success&&j.hdData)return j.hdData;
-      console.warn("HD proxy error:",j.error);return null;
-    }catch(e){console.warn("HD calc error:",e);return null;}
-  },
-  parse(d){if(!d)return{};const g=d.general||{};let pr=g.profile||"";if(pr.includes(":"))pr=pr.split(":")[0].trim();let au=g.inner_authority||"";au=au.replace(/ [Aa]uthority/,"").trim();const ch=(d.channels?.Channels||[]).map(c=>c.channel||c);const pg=(d.gates?.prs?.Planets||[]).map(p=>p.Gate);const dg=(d.gates?.des?.Planets||[]).map(p=>p.Gate);return{type:g.energy_type||"",profile:pr,authority:au,strategy:g.strategy||"",definition:g.definition||"",incarnationCross:g.inc_cross||"",centers:g.defined_centers||[],channels:ch,gates:[...new Set([...pg,...dg])].sort((a,b)=>a-b)};}
-};
+    function scoreBorder(score) {
+      const s = Number(score || 0);
+      if (s >= 75) return 'green-border';
+      if (s >= 50) return 'yellow-border';
+      return 'red-border';
+    }
 
-const G={
-  panel:{background:"rgba(255,255,255,0.04)",backdropFilter:"blur(40px) saturate(1.8)",WebkitBackdropFilter:"blur(40px) saturate(1.8)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:20},
-  card:{background:"rgba(255,255,255,0.03)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:16},
-  inp:{width:"100%",padding:"10px 14px",borderRadius:12,border:"1px solid rgba(255,255,255,0.08)",background:"rgba(255,255,255,0.04)",color:"#f1f5f9",fontSize:13,fontFamily:"inherit",outline:"none"},
-  sel:{width:"100%",padding:"10px 14px",borderRadius:12,border:"1px solid rgba(255,255,255,0.08)",background:"rgba(15,23,42,0.8)",color:"#f1f5f9",fontSize:13,fontFamily:"inherit",outline:"none"},
-};
-const lbl={fontSize:10,color:"#64748b",display:"block",marginBottom:5,fontWeight:400,letterSpacing:"0.04em"};
+    function getByAssignedRole(role) {
+      return employees.find(e => e.assignedRole === role);
+    }
 
-// Build tree levels from flat roles
-function buildLevels(roles){
-  const map={};roles.forEach(r=>{map[r.roleKey]={...r,children:[]};});
-  const roots=[];
-  roles.forEach(r=>{if(r.parentKey&&map[r.parentKey])map[r.parentKey].children.push(map[r.roleKey]);else roots.push(map[r.roleKey]);});
-  const levels=[];
-  let current=roots;
-  while(current.length>0){
-    levels.push(current);
-    const next=[];current.forEach(n=>{next.push(...n.children);});
-    current=next;
-  }
-  return levels;
-}
+    function average(field) {
+      const nums = employees
+        .map(e => Number(e[field]))
+        .filter(n => !Number.isNaN(n) && n > 0);
+      if (!nums.length) return '-';
+      return Math.round(nums.reduce((a,b) => a + b, 0) / nums.length) + '%';
+    }
 
-// ═══════════════════════════════════════════════════════════
-function App(){
-  const[view,setView]=useState("dashboard");const[tab,setTab]=useState("employees");
-  const[emps,setEmps]=useState(D_EMPS);const[roles,setRoles]=useState(D_ROLES);const[criteria,setCriteria]=useState(D_CRIT);
-  const[auth,setAuth]=useState(false);const[pw,setPw]=useState("");const[pwE,setPwE]=useState(false);
-  const[selB,setSelB]=useState(null);const[selR,setSelR]=useState(null);
-  const[editing,setEditing]=useState(null);const[showAdd,setShowAdd]=useState(false);
-  const[notif,setNotif]=useState(null);const[detail,setDetail]=useState(null);const[loading,setLoading]=useState(false);
-  const[form,setForm]=useState({name:"",birthdate:"",birthtime:"12:00",birthplace:"",type:"",profile:"",authority:"",strategy:"",definition:"",incarnationCross:"",centers:[],channels:[],gates:[]});
-  const[roleForm,setRoleForm]=useState({roleKey:"",label:"",category:"CEO/Visionary",parentKey:""});
-  const[editingRole,setEditingRole]=useState(null);const[showAddRole,setShowAddRole]=useState(false);
+    function renderDashboard() {
+      document.getElementById('avgJobFit').innerText = average('roleFitScore');
+      document.getElementById('avgManagerChem').innerText = average('managerChemistryScore');
+      document.getElementById('avgTeamChem').innerText = average('teamChemistryScore');
 
-  const noti=(m,t)=>{setNotif({m,t:t||"ok"});setTimeout(()=>setNotif(null),3000);};
-  const ORG=useMemo(()=>{const m={};roles.forEach(r=>{m[r.roleKey]={label:r.label,cat:r.category,parent:r.parentKey||null};});return m;},[roles]);
-  const aMap=useMemo(()=>{const m={};emps.forEach(e=>{if(e.assignedRole&&ORG[e.assignedRole])m[e.assignedRole]=e;});return m;},[emps,ORG]);
-  const bench=useMemo(()=>emps.filter(e=>!e.assignedRole||!ORG[e.assignedRole]),[emps,ORG]);
-  const teams=useMemo(()=>{const t={};Object.keys(ORG).forEach(k=>{const p=ORG[k].parent;if(p){if(!t[p])t[p]=[];if(aMap[k])t[p].push(aMap[k]);}});return t;},[ORG,aMap]);
-  const levels=useMemo(()=>buildLevels(roles),[roles]);
+      const bench = employees.filter(e => !e.assignedRole || ![...ROLE_ORDER_TOP, ...ROLE_ORDER_BOTTOM].includes(e.assignedRole));
+      document.getElementById('benchCount').innerText = bench.length;
 
-  useEffect(()=>{fetch(CFG.GAS).then(r=>r.json()).then(d=>{if(d.success){if(d.data?.length)setEmps(d.data);if(d.roles?.length)setRoles(d.roles);if(d.criteria?.length)setCriteria(d.criteria);}}).catch(()=>{});},[]);
+      document.getElementById('benchList').innerHTML = bench.length ? bench.map(e => `
+        <div class="sidebar-card">
+          <h4>${escapeHtml(e.name || '-')}</h4>
+          <p>${escapeHtml(e.jobRole || '-')}</p>
+          <p>${escapeHtml(e.hdType || '-')} • ${escapeHtml(e.hdProfile || '-')} • ${escapeHtml(e.hdAuthority || '-')}</p>
+          <p>Job Fit: ${e.roleFitScore || '-'}%</p>
+        </div>
+      `).join('') : `<div class="sidebar-card"><p>Tidak ada bench saat ini.</p></div>`;
 
-  const clickRole=useCallback(rk=>{
-    if(selB){setEmps(p=>p.map(e=>{if(e.id===selB)return{...e,assignedRole:rk};if(e.assignedRole===rk)return{...e,assignedRole:""};return e;}));setSelB(null);setSelR(null);noti("Assigned");}
-    else if(selR&&selR!==rk){const e1=aMap[selR],e2=aMap[rk];setEmps(p=>p.map(e=>{if(e1&&e.id===e1.id)return{...e,assignedRole:rk};if(e2&&e.id===e2.id)return{...e,assignedRole:selR};return e;}));setSelR(null);noti("Swapped");}
-    else{setSelR(rk===selR?null:rk);setSelB(null);}
-  },[selB,selR,aMap]);
-  const unassign=useCallback(rk=>{setEmps(p=>p.map(e=>e.assignedRole===rk?{...e,assignedRole:""}:e));noti("Unassigned");},[]);
+      document.getElementById('orgTop').innerHTML = ROLE_ORDER_TOP.map(renderRoleNode).join('');
+      document.getElementById('orgBottom').innerHTML = ROLE_ORDER_BOTTOM.map(renderRoleNode).join('');
+    }
 
-  const autoCalc=useCallback(async(t,s)=>{
-    if(!t.birthdate||!t.birthtime||!t.birthplace){noti("Fill birth data","warn");return;}
-    setLoading(true);noti("Calculating...","info");
-    const d=await HD.calc(t.birthdate,t.birthtime,t.birthplace);
-    if(d){s({...t,...HD.parse(d)});noti("Calculated!");}else noti("API offline","warn");
-    setLoading(false);
-  },[]);
+    function renderRoleNode(role) {
+      const e = getByAssignedRole(role);
+      if (!e) {
+        return `
+          <div class="node">
+            <div class="role">${role}</div>
+            <h3>Empty</h3>
+            <div class="line">Belum ada karyawan ditugaskan</div>
+          </div>
+        `;
+      }
 
-  const addEmp=useCallback(()=>{if(!form.name.trim()||!form.type){noti("Name & Type needed","warn");return;}setEmps(p=>[...p,{...form,id:Date.now().toString(),assignedRole:""}]);setForm({name:"",birthdate:"",birthtime:"12:00",birthplace:"",type:"",profile:"",authority:"",strategy:"",definition:"",incarnationCross:"",centers:[],channels:[],gates:[]});setShowAdd(false);noti("Added!");},[form]);
-  const updateEmp=useCallback(()=>{if(!editing)return;setEmps(p=>p.map(e=>e.id===editing.id?{...editing}:e));setEditing(null);noti("Updated!");},[editing]);
-  const deleteEmp=useCallback(id=>{setEmps(p=>p.filter(e=>e.id!==id));noti("Deleted","warn");},[]);
+      return `
+        <div class="node ${scoreBorder(e.roleFitScore)}">
+          <div class="role">${escapeHtml(role)}</div>
+          <h3>${escapeHtml(e.name || '-')}</h3>
+          <div class="line"><strong>Job Role:</strong> ${escapeHtml(e.jobRole || '-')}</div>
+          <div class="line"><strong>Type:</strong> ${escapeHtml(e.hdType || '-')}</div>
+          <div class="line"><strong>Profile:</strong> ${escapeHtml(e.hdProfile || '-')}</div>
+          <div class="line"><strong>Authority:</strong> ${escapeHtml(e.hdAuthority || '-')}</div>
+          <div class="score"><strong>Job Fit:</strong> ${scoreBadge(e.roleFitScore)}</div>
+          <div class="score"><strong>Manager Chemistry:</strong> ${scoreBadge(e.managerChemistryScore)}</div>
+          <div class="score"><strong>Team Chemistry:</strong> ${scoreBadge(e.teamChemistryScore)}</div>
+          <div class="line" style="margin-top:10px">${escapeHtml(e.roleFitReason || '')}</div>
+        </div>
+      `;
+    }
 
-  const addRole=useCallback(()=>{if(!roleForm.roleKey||!roleForm.label){noti("Key & Label needed","warn");return;}if(roles.find(r=>r.roleKey===roleForm.roleKey)){noti("Key exists","warn");return;}setRoles(p=>[...p,{...roleForm}]);fetch(CFG.GAS,{method:"POST",body:JSON.stringify({action:"addRole",...roleForm})}).catch(()=>{});setRoleForm({roleKey:"",label:"",category:"CEO/Visionary",parentKey:""});setShowAddRole(false);noti("Role added!");},[roleForm,roles]);
-  const updateRole=useCallback(()=>{if(!editingRole)return;setRoles(p=>p.map(r=>r.roleKey===editingRole.roleKey?{...editingRole}:r));fetch(CFG.GAS,{method:"POST",body:JSON.stringify({action:"editRole",...editingRole})}).catch(()=>{});setEditingRole(null);noti("Role updated!");},[editingRole]);
-  const deleteRole=useCallback(rk=>{setRoles(p=>p.filter(r=>r.roleKey!==rk));setEmps(p=>p.map(e=>e.assignedRole===rk?{...e,assignedRole:""}:e));fetch(CFG.GAS,{method:"POST",body:JSON.stringify({action:"deleteRole",roleKey:rk})}).catch(()=>{});noti("Role deleted","warn");},[]);
+    function renderAdminTable() {
+      document.getElementById('employeeTableBody').innerHTML = employees.map(e => `
+        <tr>
+          <td>${escapeHtml(e.name || '-')}</td>
+          <td>${escapeHtml(e.jobRole || '-')}</td>
+          <td>
+            ${escapeHtml(e.hdType || '-')}<br/>
+            ${escapeHtml(e.hdProfile || '-')}<br/>
+            ${escapeHtml(e.hdAuthority || '-')}
+          </td>
+          <td>${scoreBadge(e.roleFitScore)}</td>
+          <td>${scoreBadge(e.managerChemistryScore)}</td>
+          <td>${scoreBadge(e.teamChemistryScore)}</td>
+          <td>
+            <button class="btn btn-muted" onclick="editEmployee('${e.id}')">Edit</button>
+            <button class="btn btn-danger" onclick="deleteEmployee('${e.id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
 
-  return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(145deg,#0c0f1a 0%,#111828 35%,#0e1525 65%,#080b14 100%)",color:"#e2e8f0",fontFamily:"'DM Sans',-apple-system,sans-serif",fontWeight:300}},
-    React.createElement("div",{style:{position:"fixed",top:"-20%",right:"-10%",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(56,189,248,0.06) 0%,transparent 70%)",pointerEvents:"none"}}),
-    React.createElement("div",{style:{position:"fixed",bottom:"-20%",left:"-10%",width:500,height:500,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.05) 0%,transparent 70%)",pointerEvents:"none"}}),
-    notif&&React.createElement("div",{style:{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",zIndex:9999,padding:"10px 24px",borderRadius:14,...G.card,color:notif.t==="ok"?"#34d399":notif.t==="warn"?"#fbbf24":"#38bdf8",fontSize:13,animation:"fadeDown .4s ease"}},notif.m),
-    // Header
-    React.createElement("header",{style:{position:"relative",zIndex:10,padding:"16px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid rgba(255,255,255,0.04)"}},
-      React.createElement("div",{style:{display:"flex",alignItems:"center",gap:14}},
-        React.createElement("div",{style:{width:38,height:38,borderRadius:12,background:"linear-gradient(135deg,#38bdf8,#818cf8)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:600,color:"#fff"}},"HD"),
-        React.createElement("div",null,React.createElement("div",{style:{fontSize:17,fontWeight:500,color:"#f8fafc"}},"War Room"),React.createElement("div",{style:{fontSize:11,fontWeight:300,color:"#64748b"}},"Human Design \u00b7 "+roles.length+" roles \u00b7 "+emps.length+" people"))
-      ),
-      React.createElement("div",{style:{display:"flex",gap:2,...G.card,padding:3,borderRadius:14}},
-        ["dashboard","admin"].map(t=>React.createElement("button",{key:t,onClick:()=>{setView(t);setDetail(null);},style:{padding:"8px 22px",borderRadius:12,fontSize:12,fontWeight:t===view?500:300,background:t===view?"rgba(255,255,255,0.08)":"transparent",color:t===view?"#f1f5f9":"#64748b",transition:"all .3s"}},t==="dashboard"?"War Room":"HR Admin"))
-      )
-    ),
-    React.createElement("main",{style:{position:"relative",zIndex:5,padding:"24px 28px"}},
-      view==="dashboard"?React.createElement(Dash,{ORG,aMap,bench,selB,selR,clickRole,unassign,teams,detail,setDetail,levels,criteria,onBench:id=>{setSelB(id===selB?null:id);setSelR(null);}}):
-      React.createElement(Admin,{auth,pw,setPw,pwE,onPw:()=>{if(pw===CFG.PW){setAuth(true);setPwE(false);}else setPwE(true);},emps,addEmp,updateEmp,deleteEmp,editing,setEditing,showAdd,setShowAdd,form,setForm,autoCalc,loading,tab,setTab,roles,ORG,addRole,updateRole,deleteRole,roleForm,setRoleForm,editingRole,setEditingRole,showAddRole,setShowAddRole,criteria})
-    )
-  );
-}
+    function fillRoleOptions() {
+      const jobRole = document.getElementById('jobRole');
+      const assignedRole = document.getElementById('assignedRole');
+      jobRole.innerHTML = roles.map(r => `<option value="${r}">${r}</option>`).join('');
+      assignedRole.innerHTML = `<option value="">Unassigned</option>` + roles.map(r => `<option value="${r}">${r}</option>`).join('');
+    }
 
-// ═══ DASHBOARD ═══
-function Dash({ORG,aMap,bench,selB,selR,clickRole,unassign,teams,detail,setDetail,levels,criteria,onBench}){
-  return React.createElement("div",{style:{display:"flex",gap:20,minHeight:"calc(100vh - 110px)"}},
-    React.createElement("div",{style:{width:210,flexShrink:0,...G.panel,padding:18,overflowY:"auto",maxHeight:"calc(100vh - 110px)"}},
-      React.createElement("div",{style:{fontSize:11,fontWeight:400,color:"#64748b",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:16}},"Bench \u00b7 "+bench.length),
-      bench.map(e=>React.createElement("button",{key:e.id,onClick:()=>onBench(e.id),style:{width:"100%",padding:"12px 14px",marginBottom:6,borderRadius:14,border:selB===e.id?"1px solid rgba(52,211,153,0.3)":"1px solid rgba(255,255,255,0.04)",background:selB===e.id?"rgba(52,211,153,0.06)":"rgba(255,255,255,0.02)",textAlign:"left",fontFamily:"inherit",transition:"all .3s",animation:selB===e.id?"softPulse 2s infinite":"none"}},
-        React.createElement("div",{style:{fontSize:13,fontWeight:400,color:"#f1f5f9",marginBottom:4}},e.name),
-        React.createElement("div",{style:{display:"flex",gap:6,alignItems:"center"}},
-          React.createElement("span",{style:{fontSize:10,fontWeight:500,padding:"2px 8px",borderRadius:8,background:(TB[e.type]?.c||"#666")+"15",color:TB[e.type]?.c||"#999"}},TB[e.type]?.s||"?"),
-          React.createElement("span",{style:{fontSize:11,color:"#64748b",fontWeight:300}},e.profile))
-      )),
-      selB&&React.createElement("div",{style:{marginTop:12,fontSize:11,color:"#34d399",textAlign:"center",fontWeight:300}},"Tap a role to assign")
-    ),
-    React.createElement("div",{style:{flex:1,overflow:"auto"}},
-      React.createElement("div",{style:{display:"flex",gap:16,marginBottom:20}},
-        [{c:"#34d399",l:"Great Fit (75-100)"},{c:"#fbbf24",l:"Caution (45-74)"},{c:"#f87171",l:"Risk (0-44)"},{c:"#6b7280",l:"Empty / No Data"}].map(x=>React.createElement("div",{key:x.l,style:{display:"flex",alignItems:"center",gap:6,fontSize:10,color:"#94a3b8",fontWeight:300}},React.createElement("div",{style:{width:8,height:8,borderRadius:"50%",background:x.c,opacity:0.8}}),x.l))
-      ),
-      React.createElement(OrgChart,{levels,ORG,aMap,selR,clickRole,unassign,teams,setDetail,criteria})
-    ),
-    detail&&React.createElement(DetailPanel,{emp:detail,onClose:()=>setDetail(null),ORG,aMap,criteria})
-  );
-}
+    function fillManagerOptions() {
+      const manager = document.getElementById('managerId');
+      manager.innerHTML = `<option value="">No Manager</option>` + employees.map(e =>
+        `<option value="${e.id}">${escapeHtml(e.name)} (${escapeHtml(e.jobRole || '-')})</option>`
+      ).join('');
+    }
 
-// ═══ ORG CHART — proper hierarchy ═══
-function OrgChart({levels,ORG,aMap,selR,clickRole,unassign,teams,setDetail,criteria}){
-  return React.createElement("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:0}},
-    levels.map((lv,li)=>React.createElement(React.Fragment,{key:li},
-      li>0&&React.createElement("div",{style:{display:"flex",justifyContent:"center",height:40,gap:0}},
-        lv.map(r=>{const par=r.parentKey;if(!par)return null;const b=aMap[par],s=aMap[r.roleKey];const v=vertRel(b,s);
-          return React.createElement("div",{key:r.roleKey,style:{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minWidth:180,position:"relative"}},
-            React.createElement("div",{style:{width:1,height:40,background:"linear-gradient(to bottom,"+SC[v.color]+"44,"+SC[v.color]+")"}}),
-            v.color!=="gray"&&React.createElement("div",{title:v.reason,style:{position:"absolute",top:"50%",transform:"translateY(-50%)",fontSize:8,fontWeight:400,color:SC[v.color],background:"#111828",padding:"2px 7px",borderRadius:8,whiteSpace:"nowrap",border:"1px solid "+SC[v.color]+"33",cursor:"help"}},v.color==="green"?"synergy":v.color==="red"?"risk":"caution")
-          );
-        })
-      ),
-      React.createElement("div",{style:{display:"flex",justifyContent:"center",gap:12,flexWrap:"wrap"}},
-        lv.map(r=>{
-          const rk=r.roleKey,role=ORG[rk],emp=aMap[rk];
-          const sc=emp?calcScore(emp,role?.cat,criteria):{score:0,color:"gray"};
-          const isSel=selR===rk;const team=teams[rk],syn=team?teamSyn(team):null;
-          return React.createElement("div",{key:rk,style:{position:"relative",marginBottom:syn&&syn.c!=="gray"?18:6}},
-            React.createElement("button",{onClick:()=>clickRole(rk),onDoubleClick:()=>emp&&setDetail(emp),style:{width:180,padding:"14px 14px 12px",...G.card,borderColor:isSel?"rgba(56,189,248,0.3)":emp?SC[sc.color]+"30":"rgba(255,255,255,0.04)",background:isSel?"rgba(56,189,248,0.06)":emp?SC[sc.color]+"08":"rgba(255,255,255,0.02)",textAlign:"left",fontFamily:"inherit",transition:"all .35s",boxShadow:isSel?"0 0 30px rgba(56,189,248,0.08)":"0 2px 20px rgba(0,0,0,0.1)"}},
-              React.createElement("div",{style:{fontSize:9,fontWeight:400,color:"#64748b",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:7}},role?.label||rk),
-              emp?React.createElement(React.Fragment,null,
-                React.createElement("div",{style:{fontSize:13,fontWeight:400,color:"#f8fafc",marginBottom:6}},emp.name),
-                React.createElement("div",{style:{display:"flex",gap:5,alignItems:"center",flexWrap:"wrap"}},
-                  React.createElement("span",{style:{fontSize:9,fontWeight:500,padding:"2px 8px",borderRadius:7,background:(TB[emp.type]?.c||"#666")+"12",color:TB[emp.type]?.c||"#999"}},TB[emp.type]?.s||"?"),
-                  React.createElement("span",{style:{fontSize:10,color:"#94a3b8",fontWeight:300}},emp.profile)
-                ),
-                // Score badge
-                React.createElement("div",{style:{position:"absolute",top:8,right:8,padding:"2px 8px",borderRadius:8,fontSize:10,fontWeight:500,background:SC[sc.color]+"18",color:SC[sc.color],border:"1px solid "+SC[sc.color]+"30"}},sc.score+"%")
-              ):React.createElement("div",{style:{fontSize:11,color:"#334155",fontWeight:300,fontStyle:"italic",padding:"6px 0"}},isSel?"Select...":"Empty")
-            ),
-            emp&&React.createElement("button",{onClick:ev=>{ev.stopPropagation();unassign(rk);},style:{position:"absolute",top:-4,right:-4,width:18,height:18,borderRadius:9,background:"rgba(15,23,42,0.9)",border:"1px solid rgba(248,113,113,0.2)",color:"#f87171",fontSize:10,display:"flex",alignItems:"center",justifyContent:"center"}},"\u00d7"),
-            syn&&syn.c!=="gray"&&React.createElement("div",{title:syn.r,style:{position:"absolute",bottom:-12,left:"50%",transform:"translateX(-50%)",fontSize:8,fontWeight:400,padding:"2px 8px",borderRadius:8,...G.card,borderColor:SC[syn.c]+"22",color:SC[syn.c],whiteSpace:"nowrap",cursor:"help"}},syn.l)
-          );
-        })
-      )
-    )),
-    React.createElement("div",{style:{marginTop:24,fontSize:11,color:"#334155",fontWeight:300,textAlign:"center"}},"Score = weighted match (centers + type + profile + gates + authority) \u00b7 Double-tap for details")
-  );
-}
+    function resetForm() {
+      editingId = '';
+      [
+        'name','birthDate','birthTime','birthPlace','department',
+        'managerId','assignedRole','hdType','hdProfile','hdAuthority','bodygraphUrl'
+      ].forEach(id => document.getElementById(id).value = '');
+      if (roles.length) {
+        document.getElementById('jobRole').value = roles[0];
+      }
+    }
 
-// ═══ DETAIL PANEL with scoring breakdown ═══
-function DetailPanel({emp,onClose,ORG,aMap,criteria}){
-  const b=TB[emp.type]||{c:"#666"};
-  const role=emp.assignedRole?ORG[emp.assignedRole]:null;
-  const sc=role?calcScore(emp,role.cat,criteria):null;
-  // Boss relationship
-  const bossKey=role?.parent;const boss=bossKey?aMap[bossKey]:null;
-  const bossRel=boss?vertRel(boss,emp):null;
+    function editEmployee(id) {
+      const e = employees.find(x => x.id === id);
+      if (!e) return;
+      editingId = e.id;
+      document.getElementById('name').value = e.name || '';
+      document.getElementById('birthDate').value = e.birthDate || '';
+      document.getElementById('birthTime').value = e.birthTime || '';
+      document.getElementById('birthPlace').value = e.birthPlace || '';
+      document.getElementById('jobRole').value = e.jobRole || '';
+      document.getElementById('department').value = e.department || '';
+      document.getElementById('managerId').value = e.managerId || '';
+      document.getElementById('assignedRole').value = e.assignedRole || '';
+      document.getElementById('hdType').value = e.hdType || '';
+      document.getElementById('hdProfile').value = e.hdProfile || '';
+      document.getElementById('hdAuthority').value = e.hdAuthority || '';
+      document.getElementById('bodygraphUrl').value = e.bodygraphUrl || '';
+      switchView('admin');
+    }
 
-  return React.createElement("div",{style:{width:290,flexShrink:0,...G.panel,padding:20,animation:"fadeIn .4s ease",overflowY:"auto",maxHeight:"calc(100vh - 110px)"}},
-    React.createElement("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:16}},
-      React.createElement("div",null,
-        React.createElement("div",{style:{fontSize:15,fontWeight:400,color:"#f8fafc"}},emp.name),
-        React.createElement("div",{style:{fontSize:10,color:"#64748b",fontWeight:300,marginTop:2}},role?role.label:"Bench")
-      ),
-      React.createElement("button",{onClick:onClose,style:{color:"#475569",fontSize:16,fontWeight:200}},"\u00d7")
-    ),
-    // Type
-    React.createElement("div",{style:{padding:"12px 14px",borderRadius:14,background:b.c+"08",border:"1px solid "+b.c+"18",marginBottom:14}},
-      React.createElement("div",{style:{fontSize:9,color:"#64748b",textTransform:"uppercase",letterSpacing:".1em",marginBottom:4}},"Energy Type"),
-      React.createElement("div",{style:{fontSize:18,fontWeight:300,color:b.c}},emp.type)
-    ),
-    // Properties
-    React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginBottom:14}},
-      [{l:"Profile",v:emp.profile},{l:"Authority",v:emp.authority},{l:"Strategy",v:emp.strategy},{l:"Definition",v:emp.definition}].filter(x=>x.v).map(x=>
-        React.createElement("div",{key:x.l,style:{padding:"8px 10px",borderRadius:10,...G.card}},
-          React.createElement("div",{style:{fontSize:8,color:"#475569",textTransform:"uppercase",letterSpacing:".08em"}},x.l),
-          React.createElement("div",{style:{fontSize:11,fontWeight:400,color:"#cbd5e1",marginTop:3}},x.v)
-        )
-      )
-    ),
-    // JOB FIT SCORE BREAKDOWN
-    sc&&React.createElement("div",{style:{padding:14,borderRadius:14,background:SC[sc.color]+"08",border:"1px solid "+SC[sc.color]+"20",marginBottom:14}},
-      React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}},
-        React.createElement("div",{style:{fontSize:10,fontWeight:500,color:SC[sc.color],textTransform:"uppercase",letterSpacing:".08em"}},"Job Fit: "+role.cat),
-        React.createElement("div",{style:{fontSize:18,fontWeight:500,color:SC[sc.color]}},sc.score+"%")
-      ),
-      sc.details.description&&React.createElement("div",{style:{fontSize:10,color:"#94a3b8",fontWeight:300,marginBottom:10,lineHeight:1.4}},sc.details.description),
-      // Score bars
-      [{l:"Centers",d:sc.details.centers,extra:sc.details.centers.hits?.length?"Match: "+sc.details.centers.hits.join(", ")+(sc.details.centers.miss?.length?" | Miss: "+sc.details.centers.miss.join(", "):""):""},
-       {l:"Type",d:sc.details.type,extra:sc.details.type.match?"\u2713 "+emp.type+" matches":"\u2717 "+emp.type+" not ideal"},
-       {l:"Profile",d:sc.details.profile,extra:sc.details.profile.match?"\u2713 "+emp.profile+" matches":"\u2717 "+emp.profile+" not ideal"},
-       {l:"Gates",d:sc.details.gates,extra:sc.details.gates.hits?.length?"Match: Gate "+sc.details.gates.hits.join(", ")+" ("+sc.details.gates.hits.length+"/"+sc.details.gates.total+")":"0/"+sc.details.gates.total},
-       {l:"Authority",d:sc.details.authority,extra:sc.details.authority.match?"\u2713 "+emp.authority:"\u2717 "+emp.authority}
-      ].map(x=>React.createElement("div",{key:x.l,style:{marginBottom:8}},
-        React.createElement("div",{style:{display:"flex",justifyContent:"space-between",fontSize:9,color:"#64748b",marginBottom:3}},
-          React.createElement("span",null,x.l+" ("+x.d.weight+"%)"),
-          React.createElement("span",{style:{color:x.d.score>=75?"#34d399":x.d.score>=45?"#fbbf24":"#f87171"}},x.d.score+"%")
-        ),
-        React.createElement("div",{style:{height:4,borderRadius:2,background:"rgba(255,255,255,0.06)",overflow:"hidden"}},
-          React.createElement("div",{style:{height:"100%",width:x.d.score+"%",borderRadius:2,background:x.d.score>=75?"#34d399":x.d.score>=45?"#fbbf24":"#f87171",transition:"width .5s ease"}})
-        ),
-        x.extra&&React.createElement("div",{style:{fontSize:8,color:"#475569",marginTop:2,fontWeight:300}},x.extra)
-      ))
-    ),
-    // BOSS RELATIONSHIP
-    bossRel&&React.createElement("div",{style:{padding:12,borderRadius:12,...G.card,marginBottom:14}},
-      React.createElement("div",{style:{fontSize:9,fontWeight:500,color:"#64748b",textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}},"Relationship with Boss"),
-      React.createElement("div",{style:{display:"flex",alignItems:"center",gap:8,marginBottom:4}},
-        React.createElement("div",{style:{width:8,height:8,borderRadius:"50%",background:SC[bossRel.color]}}),
-        React.createElement("span",{style:{fontSize:12,fontWeight:400,color:"#e2e8f0"}},boss.name+" ("+boss.type+")")
-      ),
-      React.createElement("div",{style:{fontSize:10,color:"#94a3b8",fontWeight:300,lineHeight:1.4}},bossRel.reason)
-    ),
-    // Centers & Gates
-    emp.centers&&emp.centers.length>0&&React.createElement("div",{style:{marginBottom:12}},
-      React.createElement("div",{style:{fontSize:9,fontWeight:400,color:"#475569",textTransform:"uppercase",marginBottom:6}},"Defined Centers"),
-      React.createElement("div",{style:{display:"flex",flexWrap:"wrap",gap:4}},
-        (Array.isArray(emp.centers)?emp.centers:[]).map((c,i)=>React.createElement("span",{key:i,style:{fontSize:9,padding:"3px 8px",borderRadius:8,...G.card,color:"#818cf8"}},c))
-      )
-    ),
-    emp.gates&&emp.gates.length>0&&React.createElement("div",{style:{marginBottom:12}},
-      React.createElement("div",{style:{fontSize:9,fontWeight:400,color:"#475569",textTransform:"uppercase",marginBottom:6}},"Active Gates"),
-      React.createElement("div",{style:{display:"flex",flexWrap:"wrap",gap:3}},
-        (Array.isArray(emp.gates)?emp.gates.slice(0,24):[]).map((g,i)=>React.createElement("span",{key:i,style:{fontSize:9,padding:"2px 6px",borderRadius:6,...G.card,color:"#38bdf8"}},g))
-      )
-    ),
-    emp.incarnationCross&&React.createElement("div",{style:{padding:"8px 12px",borderRadius:10,...G.card,marginBottom:12}},
-      React.createElement("div",{style:{fontSize:8,color:"#475569",textTransform:"uppercase"}},"Cross"),
-      React.createElement("div",{style:{fontSize:10,fontWeight:300,color:"#94a3b8",marginTop:3}},emp.incarnationCross)
-    )
-  );
-}
+    async function saveEmployee() {
+      const employee = {
+        id: editingId,
+        name: document.getElementById('name').value.trim(),
+        birthDate: document.getElementById('birthDate').value,
+        birthTime: document.getElementById('birthTime').value,
+        birthPlace: document.getElementById('birthPlace').value.trim(),
+        jobRole: document.getElementById('jobRole').value,
+        department: document.getElementById('department').value.trim(),
+        managerId: document.getElementById('managerId').value,
+        assignedRole: document.getElementById('assignedRole').value,
+        hdType: document.getElementById('hdType').value,
+        hdProfile: document.getElementById('hdProfile').value.trim(),
+        hdAuthority: document.getElementById('hdAuthority').value,
+        bodygraphUrl: document.getElementById('bodygraphUrl').value.trim()
+      };
 
-// ═══ ADMIN (Employees + Org Structure tabs) ═══
-function Admin({auth,pw,setPw,pwE,onPw,emps,addEmp,updateEmp,deleteEmp,editing,setEditing,showAdd,setShowAdd,form,setForm,autoCalc,loading,tab,setTab,roles,ORG,addRole,updateRole,deleteRole,roleForm,setRoleForm,editingRole,setEditingRole,showAddRole,setShowAddRole,criteria}){
-  if(!auth)return React.createElement("div",{style:{display:"flex",justifyContent:"center",alignItems:"center",minHeight:"55vh"}},
-    React.createElement("div",{style:{width:360,padding:36,...G.panel}},
-      React.createElement("div",{style:{textAlign:"center",marginBottom:28}},
-        React.createElement("div",{style:{width:48,height:48,borderRadius:16,background:"rgba(56,189,248,0.08)",margin:"0 auto 14px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}},"\uD83D\uDD12"),
-        React.createElement("div",{style:{fontSize:18,fontWeight:400,color:"#f8fafc"}},"HR Admin"),
-        React.createElement("div",{style:{fontSize:12,color:"#64748b",fontWeight:300,marginTop:6}},"Enter password")
-      ),
-      React.createElement("input",{type:"password",value:pw,onChange:e=>setPw(e.target.value),onKeyDown:e=>e.key==="Enter"&&onPw(),placeholder:"Password",style:{...G.inp,marginBottom:12,textAlign:"center",fontSize:15,letterSpacing:"0.1em"}}),
-      pwE&&React.createElement("div",{style:{fontSize:11,color:"#f87171",marginBottom:12,textAlign:"center"}},"Incorrect"),
-      React.createElement("button",{onClick:onPw,style:{width:"100%",padding:"12px",borderRadius:14,background:"linear-gradient(135deg,#38bdf8,#818cf8)",color:"#fff",fontSize:14,fontWeight:400}},"Unlock")
-    )
-  );
+      if (!employee.name) {
+        alert('Name wajib diisi');
+        return;
+      }
 
-  return React.createElement("div",{style:{maxWidth:960,margin:"0 auto"}},
-    React.createElement("div",{style:{display:"flex",gap:2,...G.card,padding:3,borderRadius:14,marginBottom:24,width:"fit-content"}},
-      ["employees","structure"].map(k=>React.createElement("button",{key:k,onClick:()=>setTab(k),style:{padding:"8px 20px",borderRadius:12,fontSize:12,fontWeight:tab===k?500:300,background:tab===k?"rgba(255,255,255,0.08)":"transparent",color:tab===k?"#f1f5f9":"#64748b"}},k==="employees"?"Employees ("+emps.length+")":"Org Structure ("+roles.length+")"))
-    ),
-    tab==="employees"?React.createElement(EmpTab,{emps,addEmp,updateEmp,deleteEmp,editing,setEditing,showAdd,setShowAdd,form,setForm,autoCalc,loading,ORG}):
-    React.createElement(RoleTab,{roles,ORG,addRole,updateRole,deleteRole,roleForm,setRoleForm,editingRole,setEditingRole,showAddRole,setShowAddRole})
-  );
-}
+      const action = editingId ? 'update' : 'add';
+      const res = await apiPost({ action, employee });
+      if (!res.success) {
+        alert('Error: ' + res.error);
+        return;
+      }
+      resetForm();
+      await loadEmployees();
+      alert(action === 'add' ? 'Employee added' : 'Employee updated');
+    }
 
-function EmpTab({emps,addEmp,updateEmp,deleteEmp,editing,setEditing,showAdd,setShowAdd,form,setForm,autoCalc,loading,ORG}){
-  const cur=editing||form;const setCur=editing?setEditing:setForm;
-  return React.createElement(React.Fragment,null,
-    React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}},
-      React.createElement("div",{style:{fontSize:18,fontWeight:400,color:"#f8fafc"}},"Employee Database"),
-      React.createElement("button",{onClick:()=>{setShowAdd(!showAdd);setEditing(null);},style:{padding:"10px 22px",borderRadius:14,...G.card,border:"1px solid "+(showAdd?"rgba(248,113,113,0.2)":"rgba(52,211,153,0.2)"),color:showAdd?"#f87171":"#34d399",fontSize:12}},showAdd?"Cancel":"+ Add Employee")
-    ),
-    (showAdd||editing)&&React.createElement("div",{style:{...G.panel,padding:24,marginBottom:24,animation:"fadeIn .4s ease"}},
-      React.createElement("div",{style:{fontSize:15,fontWeight:400,color:"#f8fafc",marginBottom:18}},editing?"Edit Employee":"New Employee"),
-      React.createElement("div",{style:{padding:18,borderRadius:16,background:"rgba(56,189,248,0.03)",border:"1px dashed rgba(56,189,248,0.12)",marginBottom:18}},
-        React.createElement("div",{style:{fontSize:11,color:"#38bdf8",marginBottom:14}},"Birth Data \u2014 auto-calculate via HD API"),
-        React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}},
-          React.createElement("div",null,React.createElement("label",{style:lbl},"Date"),React.createElement("input",{type:"date",value:cur.birthdate||"",onChange:e=>setCur({...cur,birthdate:e.target.value}),style:G.inp})),
-          React.createElement("div",null,React.createElement("label",{style:lbl},"Time"),React.createElement("input",{type:"time",value:cur.birthtime||"12:00",onChange:e=>setCur({...cur,birthtime:e.target.value}),style:G.inp})),
-          React.createElement("div",null,React.createElement("label",{style:lbl},"Place"),React.createElement("input",{value:cur.birthplace||"",onChange:e=>setCur({...cur,birthplace:e.target.value}),placeholder:"e.g. Jakarta",style:G.inp}))
-        ),
-        React.createElement("button",{onClick:()=>autoCalc(cur,setCur),disabled:loading,style:{marginTop:14,padding:"8px 20px",borderRadius:12,background:"linear-gradient(135deg,#38bdf8,#34d399)",color:"#0f172a",fontSize:12,fontWeight:500,opacity:loading?.5:1}},loading?"Calculating...":"Auto-Calculate")
-      ),
-      React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}},
-        React.createElement("div",null,React.createElement("label",{style:lbl},"Name"),React.createElement("input",{value:cur.name||"",onChange:e=>setCur({...cur,name:e.target.value}),style:G.inp})),
-        React.createElement("div",null,React.createElement("label",{style:lbl},"Type"),React.createElement("select",{value:cur.type||"",onChange:e=>setCur({...cur,type:e.target.value}),style:G.sel},React.createElement("option",{value:""},"\u2014"),TYPES.map(t=>React.createElement("option",{key:t,value:t},t)))),
-        React.createElement("div",null,React.createElement("label",{style:lbl},"Profile"),React.createElement("select",{value:cur.profile||"",onChange:e=>setCur({...cur,profile:e.target.value}),style:G.sel},React.createElement("option",{value:""},"auto"),PROFILES.map(p=>React.createElement("option",{key:p,value:p},p)))),
-        React.createElement("div",null,React.createElement("label",{style:lbl},"Authority"),React.createElement("select",{value:cur.authority||"",onChange:e=>setCur({...cur,authority:e.target.value}),style:G.sel},React.createElement("option",{value:""},"auto"),AUTHS.map(a=>React.createElement("option",{key:a,value:a},a))))
-      ),
-      React.createElement("button",{onClick:editing?updateEmp:addEmp,style:{padding:"10px 28px",borderRadius:12,background:"linear-gradient(135deg,#34d399,#38bdf8)",color:"#0f172a",fontSize:12,fontWeight:500}},editing?"Save":"Add")
-    ),
-    React.createElement("div",{style:{...G.panel,overflow:"hidden"}},
-      React.createElement("table",{style:{width:"100%",borderCollapse:"collapse"}},
-        React.createElement("thead",null,React.createElement("tr",{style:{borderBottom:"1px solid rgba(255,255,255,0.04)"}},
-          ["Name","Type","Profile","Role",""].map(h=>React.createElement("th",{key:h,style:{padding:"12px 14px",textAlign:"left",fontSize:10,fontWeight:400,color:"#475569",letterSpacing:".1em",textTransform:"uppercase"}},h))
-        )),
-        React.createElement("tbody",null,emps.map(e=>React.createElement("tr",{key:e.id,style:{borderBottom:"1px solid rgba(255,255,255,0.02)"}},
-          React.createElement("td",{style:{padding:"12px 14px",fontWeight:400,color:"#e2e8f0",fontSize:13}},e.name),
-          React.createElement("td",{style:{padding:"12px 14px"}},React.createElement("span",{style:{fontSize:10,fontWeight:500,padding:"3px 10px",borderRadius:8,background:(TB[e.type]?.c||"#666")+"10",color:TB[e.type]?.c||"#666"}},e.type)),
-          React.createElement("td",{style:{padding:"12px 14px",color:"#94a3b8",fontSize:12,fontWeight:300}},e.profile),
-          React.createElement("td",{style:{padding:"12px 14px",color:"#64748b",fontSize:11,fontWeight:300}},e.assignedRole&&ORG[e.assignedRole]?ORG[e.assignedRole].label:"\u2014"),
-          React.createElement("td",{style:{padding:"12px 14px"}},React.createElement("div",{style:{display:"flex",gap:6}},
-            React.createElement("button",{onClick:()=>{setEditing({...e});setShowAdd(false);},style:{padding:"5px 12px",borderRadius:10,...G.card,color:"#fbbf24",fontSize:10,border:"1px solid rgba(251,191,36,0.15)"}},"Edit"),
-            React.createElement("button",{onClick:()=>deleteEmp(e.id),style:{padding:"5px 10px",borderRadius:10,...G.card,color:"#f87171",fontSize:10,border:"1px solid rgba(248,113,113,0.15)"}},"\u00d7")
-          ))
-        )))
-      )
-    )
-  );
-}
+    async function deleteEmployee(id) {
+      if (!confirm('Delete this employee?')) return;
+      const res = await apiPost({ action: 'delete', id });
+      if (!res.success) {
+        alert('Error: ' + res.error);
+        return;
+      }
+      await loadEmployees();
+    }
 
-function RoleTab({roles,ORG,addRole,updateRole,deleteRole,roleForm,setRoleForm,editingRole,setEditingRole,showAddRole,setShowAddRole}){
-  const cur=editingRole||roleForm;const setCur=editingRole?setEditingRole:setRoleForm;
-  return React.createElement(React.Fragment,null,
-    React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}},
-      React.createElement("div",null,React.createElement("div",{style:{fontSize:18,fontWeight:400,color:"#f8fafc"}},"Org Structure"),React.createElement("div",{style:{fontSize:12,color:"#64748b",fontWeight:300,marginTop:2}},"Add/edit roles. Chart updates instantly.")),
-      React.createElement("button",{onClick:()=>{setShowAddRole(!showAddRole);setEditingRole(null);},style:{padding:"10px 22px",borderRadius:14,...G.card,border:"1px solid "+(showAddRole?"rgba(248,113,113,0.2)":"rgba(56,189,248,0.2)"),color:showAddRole?"#f87171":"#38bdf8",fontSize:12}},showAddRole?"Cancel":"+ Add Role")
-    ),
-    (showAddRole||editingRole)&&React.createElement("div",{style:{...G.panel,padding:24,marginBottom:24,animation:"fadeIn .4s ease"}},
-      React.createElement("div",{style:{fontSize:15,fontWeight:400,color:"#f8fafc",marginBottom:18}},editingRole?"Edit Role":"New Role"),
-      React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}},
-        React.createElement("div",null,React.createElement("label",{style:lbl},"Role Key (unique, no spaces)"),React.createElement("input",{value:cur.roleKey||"",onChange:e=>setCur({...cur,roleKey:e.target.value.toLowerCase().replace(/[^a-z0-9_]/g,"")}),placeholder:"e.g. dir_finance",style:G.inp,disabled:!!editingRole})),
-        React.createElement("div",null,React.createElement("label",{style:lbl},"Display Label"),React.createElement("input",{value:cur.label||"",onChange:e=>setCur({...cur,label:e.target.value}),placeholder:"e.g. Director Finance",style:G.inp})),
-        React.createElement("div",null,React.createElement("label",{style:lbl},"Category (Job-Fit scoring)"),React.createElement("select",{value:cur.category||"",onChange:e=>setCur({...cur,category:e.target.value}),style:G.sel},CATS.map(c=>React.createElement("option",{key:c,value:c},c)))),
-        React.createElement("div",null,React.createElement("label",{style:lbl},"Reports To"),React.createElement("select",{value:cur.parentKey||"",onChange:e=>setCur({...cur,parentKey:e.target.value}),style:G.sel},React.createElement("option",{value:""},"None (top level)"),roles.filter(r=>r.roleKey!==cur.roleKey).map(r=>React.createElement("option",{key:r.roleKey,value:r.roleKey},r.label))))
-      ),
-      React.createElement("button",{onClick:editingRole?updateRole:addRole,style:{padding:"10px 28px",borderRadius:12,background:"linear-gradient(135deg,#38bdf8,#818cf8)",color:"#fff",fontSize:12,fontWeight:500}},editingRole?"Save":"Add Role")
-    ),
-    React.createElement("div",{style:{...G.panel,overflow:"hidden"}},
-      React.createElement("table",{style:{width:"100%",borderCollapse:"collapse"}},
-        React.createElement("thead",null,React.createElement("tr",{style:{borderBottom:"1px solid rgba(255,255,255,0.04)"}},
-          ["Key","Label","Category","Reports To",""].map(h=>React.createElement("th",{key:h,style:{padding:"12px 14px",textAlign:"left",fontSize:10,fontWeight:400,color:"#475569",letterSpacing:".1em",textTransform:"uppercase"}},h))
-        )),
-        React.createElement("tbody",null,roles.map(r=>React.createElement("tr",{key:r.roleKey,style:{borderBottom:"1px solid rgba(255,255,255,0.02)"}},
-          React.createElement("td",{style:{padding:"12px 14px",color:"#38bdf8",fontSize:12,fontFamily:"monospace"}},r.roleKey),
-          React.createElement("td",{style:{padding:"12px 14px",color:"#e2e8f0",fontSize:13}},r.label),
-          React.createElement("td",{style:{padding:"12px 14px",color:"#94a3b8",fontSize:11}},r.category),
-          React.createElement("td",{style:{padding:"12px 14px",color:"#64748b",fontSize:11}},r.parentKey?ORG[r.parentKey]?.label||r.parentKey:"top level"),
-          React.createElement("td",{style:{padding:"12px 14px"}},React.createElement("div",{style:{display:"flex",gap:6}},
-            React.createElement("button",{onClick:()=>{setEditingRole({...r});setShowAddRole(false);},style:{padding:"5px 12px",borderRadius:10,...G.card,color:"#fbbf24",fontSize:10,border:"1px solid rgba(251,191,36,0.15)"}},"Edit"),
-            React.createElement("button",{onClick:()=>deleteRole(r.roleKey),style:{padding:"5px 10px",borderRadius:10,...G.card,color:"#f87171",fontSize:10,border:"1px solid rgba(248,113,113,0.15)"}},"\u00d7")
-          ))
-        )))
-      )
-    )
-  );
-}
+    async function recomputeAll() {
+      const res = await apiPost({ action: 'recompute' });
+      if (!res.success) {
+        alert('Error: ' + res.error);
+        return;
+      }
+      await loadEmployees();
+      alert('Recomputed');
+    }
 
-ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
-</script>
+    async function loadEmployees() {
+      const res = await apiGet();
+      if (!res.success) {
+        alert('Failed to load data: ' + res.error);
+        return;
+      }
+      employees = res.data || [];
+      roles = res.roles || [];
+      fillRoleOptions();
+      fillManagerOptions();
+      renderDashboard();
+      renderAdminTable();
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    loadEmployees();
+  </script>
 </body>
 </html>
