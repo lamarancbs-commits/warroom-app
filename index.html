@@ -22,7 +22,10 @@
       --radius: 20px;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Inter, Arial, Helvetica, sans-serif;
@@ -81,7 +84,9 @@
       flex-wrap: wrap;
     }
 
-    button, input, select {
+    button,
+    input,
+    select {
       font: inherit;
     }
 
@@ -182,8 +187,43 @@
 
     .role-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 14px;
+    }
+
+    .role-group {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .role-group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .role-group-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .role-group-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .employee-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .role-node {
@@ -194,6 +234,10 @@
       min-height: 178px;
       position: relative;
       overflow: hidden;
+    }
+
+    .employee-card {
+      min-height: auto;
     }
 
     .role-node::after {
@@ -227,7 +271,7 @@
     .role-sub {
       color: var(--muted);
       font-size: 13px;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
 
     .person-name {
@@ -252,9 +296,17 @@
       color: #dbe7ff;
     }
 
-    .score-chip.good { border-color: rgba(22,163,74,0.45); }
-    .score-chip.warn { border-color: rgba(245,158,11,0.45); }
-    .score-chip.bad { border-color: rgba(220,38,38,0.45); }
+    .score-chip.good {
+      border-color: rgba(22,163,74,0.45);
+    }
+
+    .score-chip.warn {
+      border-color: rgba(245,158,11,0.45);
+    }
+
+    .score-chip.bad {
+      border-color: rgba(220,38,38,0.45);
+    }
 
     .empty-node {
       border-style: dashed;
@@ -269,7 +321,8 @@
       color: var(--muted);
     }
 
-    .bench-list, .table-wrap {
+    .bench-list,
+    .table-wrap {
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -326,7 +379,8 @@
       margin-bottom: 6px;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       padding: 11px 12px;
       border-radius: 12px;
@@ -342,7 +396,8 @@
       font-size: 14px;
     }
 
-    th, td {
+    th,
+    td {
       padding: 10px 12px;
       border-bottom: 1px solid var(--line);
       text-align: left;
@@ -381,12 +436,16 @@
       display: none;
     }
 
-    .status.show { display: block; }
+    .status.show {
+      display: block;
+    }
+
     .status.ok {
       background: rgba(22,163,74,0.12);
       border: 1px solid rgba(22,163,74,0.25);
       color: #bbf7d0;
     }
+
     .status.err {
       background: rgba(220,38,38,0.12);
       border: 1px solid rgba(220,38,38,0.25);
@@ -443,15 +502,18 @@
       .app {
         grid-template-columns: 1fr;
       }
+
       .sidebar {
         height: auto;
         position: static;
         border-left: 0;
         border-top: 1px solid var(--line);
       }
+
       .grid-kpi {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+
       .admin-box {
         grid-template-columns: 1fr;
       }
@@ -461,9 +523,12 @@
       .grid-kpi {
         grid-template-columns: 1fr;
       }
-      .main, .sidebar {
+
+      .main,
+      .sidebar {
         padding: 16px;
       }
+
       .role-grid {
         grid-template-columns: 1fr;
       }
@@ -509,7 +574,7 @@
         <div class="section-title">
           <div>
             <h2>Organizational Structure</h2>
-            <p>CEO at top, active placements in the main org, open roles below</p>
+            <p>CEO at top, all assigned employees shown by role group, open roles below</p>
           </div>
         </div>
 
@@ -520,7 +585,7 @@
           <div class="section-title">
             <div>
               <h2>Leadership & Team</h2>
-              <p>Only roles with assigned employees</p>
+              <p>All employees assigned into active role groups</p>
             </div>
           </div>
           <div class="role-grid" id="filledRolesGrid"></div>
@@ -548,39 +613,48 @@
         <div class="admin-box">
           <div class="card">
             <h3 style="margin-top:0;">Add / Update Employee</h3>
+
             <div class="form-grid">
               <div>
                 <label for="empId">ID</label>
                 <input id="empId" placeholder="Auto or manual ID" />
               </div>
+
               <div>
                 <label for="empName">Name</label>
                 <input id="empName" placeholder="Employee name" />
               </div>
+
               <div>
                 <label for="birthDate">Birth Date</label>
                 <input id="birthDate" type="date" />
               </div>
+
               <div>
                 <label for="birthTime">Birth Time</label>
                 <input id="birthTime" type="time" />
               </div>
+
               <div>
                 <label for="birthPlace">Birth Place</label>
                 <input id="birthPlace" placeholder="City, country" />
               </div>
+
               <div>
                 <label for="jobRole">Job Role</label>
                 <input id="jobRole" placeholder="e.g. Finance Lead" />
               </div>
+
               <div>
                 <label for="department">Department</label>
                 <input id="department" placeholder="e.g. Finance" />
               </div>
+
               <div>
                 <label for="managerId">Manager</label>
                 <select id="managerId"></select>
               </div>
+
               <div>
                 <label for="assignedRole">Assigned Role</label>
                 <select id="assignedRole"></select>
@@ -662,55 +736,55 @@
     const SAMPLE_EMPLOYEES = [
       {
         id: "1",
-        name: "Maulana",
+        name: "MAULANA",
         birthDate: "1990-01-10",
         birthTime: "08:30",
         birthPlace: "Jakarta Indonesia",
         jobRole: "CEO",
-        department: "Executive",
+        department: "Organization",
         managerId: "",
         assignedRole: "CEO",
         hdType: "Manifesting Generator",
-        hdProfile: "3/5",
+        hdProfile: "5/1",
         hdAuthority: "Sacral",
-        roleFitScore: 91,
+        roleFitScore: 72,
         managerChemistryScore: 0,
-        teamChemistryScore: 84,
+        teamChemistryScore: 70,
         placementStatus: "Assigned",
         updatedAt: new Date().toISOString()
       },
       {
         id: "2",
-        name: "Sarah",
+        name: "Risa Febria Arumi",
         birthDate: "1993-02-14",
         birthTime: "10:15",
         birthPlace: "Bandung Indonesia",
-        jobRole: "HR Lead",
-        department: "HR",
+        jobRole: "Product Manager",
+        department: "Product",
         managerId: "1",
-        assignedRole: "HR",
-        hdType: "Projector",
-        hdProfile: "2/4",
-        hdAuthority: "Splenic",
-        roleFitScore: 86,
-        managerChemistryScore: 88,
-        teamChemistryScore: 81,
+        assignedRole: "Product Manager",
+        hdType: "Manifestor",
+        hdProfile: "5/1",
+        hdAuthority: "Emotional",
+        roleFitScore: 80,
+        managerChemistryScore: 77,
+        teamChemistryScore: 75,
         placementStatus: "Assigned",
         updatedAt: new Date().toISOString()
       },
       {
         id: "3",
-        name: "Dimas",
+        name: "Nita Septiani",
         birthDate: "1995-06-21",
         birthTime: "14:00",
         birthPlace: "Surabaya Indonesia",
         jobRole: "IT Lead",
-        department: "IT",
+        department: "Organization",
         managerId: "1",
         assignedRole: "IT",
         hdType: "Generator",
-        hdProfile: "5/1",
-        hdAuthority: "Sacral",
+        hdProfile: "3/5",
+        hdAuthority: "Emotional",
         roleFitScore: 78,
         managerChemistryScore: 72,
         teamChemistryScore: 76,
@@ -719,21 +793,59 @@
       },
       {
         id: "4",
-        name: "Nadia",
+        name: "Bambang Eko Wijayanto",
         birthDate: "1996-08-02",
         birthTime: "09:45",
         birthPlace: "Jakarta Indonesia",
-        jobRole: "Marketing Associate",
-        department: "Marketing",
+        jobRole: "Marketing",
+        department: "Operation",
         managerId: "1",
-        assignedRole: "",
-        hdType: "Manifestor",
-        hdProfile: "6/2",
+        assignedRole: "Marketing",
+        hdType: "Generator",
+        hdProfile: "2/4",
         hdAuthority: "Emotional",
-        roleFitScore: 69,
+        roleFitScore: 74,
         managerChemistryScore: 75,
         teamChemistryScore: 71,
-        placementStatus: "Bench",
+        placementStatus: "Assigned",
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: "5",
+        name: "Second Product Manager",
+        birthDate: "1994-03-12",
+        birthTime: "11:10",
+        birthPlace: "Jakarta Indonesia",
+        jobRole: "Senior Product Manager",
+        department: "Product",
+        managerId: "2",
+        assignedRole: "Product Manager",
+        hdType: "Projector",
+        hdProfile: "2/4",
+        hdAuthority: "Splenic",
+        roleFitScore: 82,
+        managerChemistryScore: 79,
+        teamChemistryScore: 80,
+        placementStatus: "Assigned",
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: "6",
+        name: "Second IT",
+        birthDate: "1992-05-18",
+        birthTime: "07:25",
+        birthPlace: "Bandung Indonesia",
+        jobRole: "IT Engineer",
+        department: "IT",
+        managerId: "3",
+        assignedRole: "IT",
+        hdType: "Manifesting Generator",
+        hdProfile: "1/3",
+        hdAuthority: "Sacral",
+        roleFitScore: 76,
+        managerChemistryScore: 74,
+        teamChemistryScore: 78,
+        placementStatus: "Assigned",
         updatedAt: new Date().toISOString()
       }
     ];
@@ -759,14 +871,18 @@
       return "bad";
     }
 
+    function safe(val, fallback = "-") {
+      return val === undefined || val === null || val === "" ? fallback : val;
+    }
+
     function managerName(managerId) {
       if (!managerId) return "-";
       const found = employees.find(e => String(e.id) === String(managerId));
       return found ? found.name : "-";
     }
 
-    function getByAssignedRole(role) {
-      return employees.find(e => String(e.assignedRole || "").trim() === role);
+    function getEmployeesByAssignedRole(role) {
+      return employees.filter(e => String(e.assignedRole || "").trim() === role);
     }
 
     function isBenchEmployee(emp) {
@@ -774,16 +890,14 @@
       return !assigned || !ROLE_ORDER.includes(assigned);
     }
 
-    function safe(val, fallback = "-") {
-      return val === undefined || val === null || val === "" ? fallback : val;
-    }
-
     async function apiGet() {
       const res = await fetch(API_URL, {
         method: "GET",
         cache: "no-store"
       });
-      if (!res.ok) throw new Error("Failed to fetch dashboard data.");
+      if (!res.ok) {
+        throw new Error("Failed to fetch dashboard data.");
+      }
       return res.json();
     }
 
@@ -794,7 +908,9 @@
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error("Failed to send data.");
+      if (!res.ok) {
+        throw new Error("Failed to send data.");
+      }
       return res.json();
     }
 
@@ -818,20 +934,41 @@
     }
 
     function renderDashboard() {
-      const ceo = getByAssignedRole("CEO");
-      const filledRoles = ROLE_ORDER.filter(role => role !== "CEO" && !!getByAssignedRole(role));
-      const emptyRoles = ROLE_ORDER.filter(role => role !== "CEO" && !getByAssignedRole(role));
+      const ceoEmployees = getEmployeesByAssignedRole("CEO");
+      const filledRoles = ROLE_ORDER.filter(role => role !== "CEO" && getEmployeesByAssignedRole(role).length > 0);
+      const emptyRoles = ROLE_ORDER.filter(role => role !== "CEO" && getEmployeesByAssignedRole(role).length === 0);
       const benchEmployees = employees.filter(isBenchEmployee);
 
+      const totalFilledRoleCount = ROLE_ORDER.filter(role => getEmployeesByAssignedRole(role).length > 0).length;
+
       el("kpiTotalEmployees").textContent = employees.length;
-      el("kpiFilledRoles").textContent = (ceo ? 1 : 0) + filledRoles.length;
-      el("kpiOpenRoles").textContent = emptyRoles.length + (ceo ? 0 : 1);
+      el("kpiFilledRoles").textContent = totalFilledRoleCount;
+      el("kpiOpenRoles").textContent = ROLE_ORDER.length - totalFilledRoleCount;
       el("kpiBench").textContent = benchEmployees.length;
 
       const ceoRow = el("ceoRow");
       ceoRow.innerHTML = "";
-      if (ceo) {
-        ceoRow.appendChild(renderRoleNode("CEO", ceo, true));
+
+      if (ceoEmployees.length > 0) {
+        const ceoWrap = document.createElement("div");
+        ceoWrap.className = "role-group";
+        ceoWrap.style.width = "min(720px, 100%)";
+        ceoWrap.innerHTML = `
+          <div class="role-group-header">
+            <div>
+              <div class="role-group-title">CEO</div>
+              <div class="role-group-sub">${ceoEmployees.length} employee(s) assigned</div>
+            </div>
+          </div>
+          <div class="employee-stack"></div>
+        `;
+
+        const stack = ceoWrap.querySelector(".employee-stack");
+        ceoEmployees.forEach(emp => {
+          stack.appendChild(renderEmployeeCard(emp, "Top Leadership", true));
+        });
+
+        ceoRow.appendChild(ceoWrap);
         el("connector1").classList.remove("hidden");
       } else {
         ceoRow.appendChild(renderEmptyRoleNode("CEO", "Top leadership role is open"));
@@ -840,16 +977,18 @@
 
       const filledGrid = el("filledRolesGrid");
       filledGrid.innerHTML = "";
+
       filledRoles.forEach(role => {
-        const emp = getByAssignedRole(role);
-        filledGrid.appendChild(renderRoleNode(role, emp, false));
+        const roleEmployees = getEmployeesByAssignedRole(role);
+        filledGrid.appendChild(renderRoleGroup(role, roleEmployees));
       });
 
       const openGrid = el("openRolesGrid");
       openGrid.innerHTML = "";
-      const openRoles = ceo ? emptyRoles : ["CEO", ...emptyRoles];
+
+      const openRoles = ceoEmployees.length > 0 ? emptyRoles : ["CEO", ...emptyRoles];
       openRoles.forEach(role => {
-        if (role === "CEO" && ceo) return;
+        if (role === "CEO" && ceoEmployees.length > 0) return;
         openGrid.appendChild(renderEmptyRoleNode(role, "Waiting for assignment"));
       });
 
@@ -861,6 +1000,7 @@
 
       const benchList = el("benchList");
       benchList.innerHTML = "";
+
       if (benchEmployees.length === 0) {
         benchList.innerHTML = `<div class="card"><div class="muted">No bench employees at the moment.</div></div>`;
       } else {
@@ -881,14 +1021,36 @@
       }
     }
 
-    function renderRoleNode(role, emp, isCEO) {
+    function renderRoleGroup(role, roleEmployees) {
       const wrapper = document.createElement("div");
-      wrapper.className = "role-node";
+      wrapper.className = "role-group";
+
       wrapper.innerHTML = `
-        <div class="role-tag">${isCEO ? "Top Leadership" : "Filled Role"}</div>
-        <div class="role-title">${role}</div>
-        <div class="role-sub">${safe(emp.department, "Organization")}</div>
+        <div class="role-group-header">
+          <div>
+            <div class="role-group-title">${role}</div>
+            <div class="role-group-sub">${roleEmployees.length} employee(s) assigned</div>
+          </div>
+        </div>
+        <div class="employee-stack"></div>
+      `;
+
+      const stack = wrapper.querySelector(".employee-stack");
+      roleEmployees.forEach(emp => {
+        stack.appendChild(renderEmployeeCard(emp, "Filled Role", false));
+      });
+
+      return wrapper;
+    }
+
+    function renderEmployeeCard(emp, tagLabel, isCEO) {
+      const card = document.createElement("div");
+      card.className = "role-node employee-card";
+
+      card.innerHTML = `
+        <div class="role-tag">${tagLabel}</div>
         <div class="person-name">${safe(emp.name)}</div>
+        <div class="role-sub">${safe(emp.department, "Organization")}</div>
         <div class="muted">${safe(emp.hdType)} · ${safe(emp.hdProfile)} · ${safe(emp.hdAuthority)}</div>
         <div class="score-row">
           <span class="score-chip ${scoreClass(emp.roleFitScore)}">Job Fit ${safe(emp.roleFitScore, 0)}%</span>
@@ -896,7 +1058,8 @@
           <span class="score-chip ${scoreClass(emp.teamChemistryScore)}">Team Chemistry ${safe(emp.teamChemistryScore, 0)}%</span>
         </div>
       `;
-      return wrapper;
+
+      return card;
     }
 
     function renderEmptyRoleNode(role, reason) {
@@ -1006,7 +1169,9 @@
         if (API_URL) {
           const action = data.id ? "update" : "add";
           const response = await apiPost({ action, employee: data });
-          if (!response || response.success === false) throw new Error("Save failed.");
+          if (!response || response.success === false) {
+            throw new Error("Save failed.");
+          }
           showStatus(status, "Employee saved successfully.");
           await loadEmployees();
           if (!data.id) clearForm();
@@ -1044,7 +1209,9 @@
       try {
         if (API_URL) {
           const response = await apiPost({ action: "delete", id });
-          if (!response || response.success === false) throw new Error("Delete failed.");
+          if (!response || response.success === false) {
+            throw new Error("Delete failed.");
+          }
           showStatus(status, "Employee deleted successfully.");
           clearForm();
           await loadEmployees();
@@ -1104,8 +1271,6 @@
       el("refreshBtn").addEventListener("click", loadEmployees);
       el("recomputeBtn").addEventListener("click", recomputeAll);
 
-      // This is the part that fixes the HR admin click issue.
-      // Explicit button type=button + direct click binding after DOM loads.
       el("adminBtn").addEventListener("click", () => {
         if (adminUnlocked) {
           el("adminPanel").classList.toggle("active");
