@@ -1,232 +1,1139 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Human Design Executive War Room</title>
+  <title>Human Design HR War Room</title>
   <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#121a2f;
-      --panel2:#0f172a;
-      --line:#24304a;
-      --text:#edf2ff;
-      --muted:#9aa7c2;
-      --green:#10b981;
-      --yellow:#f59e0b;
-      --red:#ef4444;
-      --blue:#38bdf8;
-      --purple:#a855f7;
+    :root {
+      --bg: #0b1020;
+      --panel: #121a2f;
+      --panel-2: #18223d;
+      --muted: #8fa0c7;
+      --text: #eef3ff;
+      --line: rgba(255,255,255,0.08);
+      --accent: #6ea8fe;
+      --accent-2: #8b5cf6;
+      --good: #16a34a;
+      --warn: #f59e0b;
+      --bad: #dc2626;
+      --chip: #243253;
+      --shadow: 0 10px 35px rgba(0,0,0,0.35);
+      --radius: 20px;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter,Arial,sans-serif;
-      background:linear-gradient(180deg,#09111f,#08101c 40%,#070d18);
-      color:var(--text);
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(110,168,254,0.15), transparent 25%),
+        radial-gradient(circle at top left, rgba(139,92,246,0.12), transparent 20%),
+        var(--bg);
+      color: var(--text);
     }
-    .container{max-width:1400px;margin:0 auto;padding:24px}
-    .header,.panel,.card,.node,.table-wrap,.sidebar-card,.open-role-card{
-      background:rgba(18,26,47,.92);
-      border:1px solid rgba(154,167,194,.15);
-      box-shadow:0 20px 40px rgba(0,0,0,.25);
-      border-radius:18px;
+
+    .app {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      min-height: 100vh;
     }
-    .header{padding:24px;margin-bottom:20px}
-    .title{font-size:30px;font-weight:800;margin:6px 0}
-    .subtitle{color:var(--muted);font-size:14px;line-height:1.6}
-    .top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
-    .btn{
-      border:none;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;
-      background:#1f2a44;color:#fff
+
+    .main {
+      padding: 24px;
     }
-    .btn:hover{opacity:.9}
-    .btn-primary{background:var(--blue);color:#04111f}
-    .btn-purple{background:var(--purple)}
-    .btn-danger{background:#7f1d1d}
-    .btn-success{background:#0f766e}
-    .btn-muted{background:#1f2937}
-    .grid{
-      display:grid;
-      grid-template-columns:320px 1fr;
-      gap:20px;
+
+    .sidebar {
+      border-left: 1px solid var(--line);
+      background: rgba(7, 12, 24, 0.55);
+      backdrop-filter: blur(14px);
+      padding: 24px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
     }
-    .panel{padding:18px}
-    .sidebar-title,.section-title{font-size:20px;font-weight:800;margin:0}
-    .muted{color:var(--muted)}
-    .small{font-size:12px}
-    .badge{
-      display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
     }
-    .green{background:rgba(16,185,129,.15);color:#9ff5d1;border:1px solid rgba(16,185,129,.35)}
-    .yellow{background:rgba(245,158,11,.15);color:#ffe1a0;border:1px solid rgba(245,158,11,.35)}
-    .red{background:rgba(239,68,68,.15);color:#ffb0b0;border:1px solid rgba(239,68,68,.35)}
-    .gray{background:rgba(148,163,184,.15);color:#cbd5e1;border:1px solid rgba(148,163,184,.35)}
-    .sidebar-card{padding:14px;margin-top:12px}
-    .sidebar-card h4{margin:0 0 6px 0;font-size:15px}
-    .sidebar-card p{margin:4px 0;color:var(--muted);font-size:13px}
-    .org{padding:16px}
-    .org-top-single{
-      display:flex;
-      justify-content:center;
-      margin:18px 0 22px 0;
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.1;
     }
-    .org-grid-filled{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-      gap:16px;
-      margin-top:18px;
+
+    .brand p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
     }
-    .org-grid-empty{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-      gap:12px;
-      margin-top:14px;
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-    .node{
-      padding:14px;min-height:220px;position:relative;border:2px solid #334155
+
+    button, input, select {
+      font: inherit;
     }
-    .node.green-border{border-color:var(--green)}
-    .node.yellow-border{border-color:var(--yellow)}
-    .node.red-border{border-color:var(--red)}
-    .node.gray-border{border-color:#334155}
-    .node h3{margin:0;font-size:18px;line-height:1.2}
-    .node .role{margin:4px 0 10px 0;color:#7dd3fc;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
-    .node .line{font-size:13px;color:var(--muted);margin:5px 0;line-height:1.45}
-    .node .score{margin-top:10px}
-    .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
-    .card{padding:16px}
-    .card h4{margin:0 0 8px 0}
-    .form-grid{
-      display:grid;grid-template-columns:repeat(2,1fr);gap:12px
+
+    .btn {
+      appearance: none;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      padding: 11px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: var(--shadow);
     }
-    .input,select{
-      width:100%;
-      height:48px;
-      padding:12px;
-      border-radius:12px;
-      border:1px solid rgba(154,167,194,.18);
-      background:#0b1327;
-      color:white;
-      appearance:none;
-      -webkit-appearance:none;
-      -moz-appearance:none;
-      background-image:
-        linear-gradient(45deg, transparent 50%, #9fb3d9 50%),
-        linear-gradient(135deg, #9fb3d9 50%, transparent 50%);
-      background-position:
-        calc(100% - 20px) calc(50% - 3px),
-        calc(100% - 14px) calc(50% - 3px);
-      background-size:6px 6px, 6px 6px;
-      background-repeat:no-repeat;
-      padding-right:40px;
+
+    .btn.secondary {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--line);
+      box-shadow: none;
     }
-    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-    .table-wrap{padding:16px;overflow:auto}
-    table{width:100%;border-collapse:collapse;font-size:13px}
-    th,td{padding:10px;border-bottom:1px solid rgba(154,167,194,.12);text-align:left;vertical-align:top}
-    th{color:#9fb3d9}
-    tr:hover{background:rgba(255,255,255,.02)}
-    .hidden{display:none}
-    .flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap}
-    .org-divider{
-      height:1px;
-      background:rgba(154,167,194,.12);
-      margin:18px 0;
+
+    .btn.ghost {
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-color: var(--line);
+      box-shadow: none;
     }
-    .open-role-card{
-      background:rgba(11,19,39,.85);
-      border:1px dashed rgba(154,167,194,.22);
-      padding:14px;
-      min-height:96px;
+
+    .btn.small {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
     }
-    .open-role-card .role{
-      margin:0 0 8px 0;
-      color:#7dd3fc;
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.08em;
+
+    .grid-kpi {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
     }
-    .open-role-card .text{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.45;
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
     }
-    .section-subtitle{
-      color:var(--muted);
-      font-size:13px;
-      margin-top:6px;
+
+    .kpi .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
     }
-    @media(max-width:1100px){
-      .grid{grid-template-columns:1fr}
-      .kpi-row{grid-template-columns:1fr}
-      .form-grid{grid-template-columns:1fr}
+
+    .kpi .value {
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 22px 0 12px;
+    }
+
+    .section-title h2 {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .org-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .ceo-row {
+      display: flex;
+      justify-content: center;
+    }
+
+    .connector {
+      width: 2px;
+      height: 26px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+      margin: 0 auto;
+      border-radius: 999px;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+    }
+
+    .role-node {
+      background: linear-gradient(180deg, rgba(110,168,254,0.08), rgba(255,255,255,0.02));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      min-height: 178px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .role-node::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -40% auto;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(110,168,254,0.14), transparent 65%);
+      pointer-events: none;
+    }
+
+    .role-tag {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--chip);
+      color: #c8d7ff;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .role-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .role-sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .person-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .score-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .score-chip {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #dbe7ff;
+    }
+
+    .score-chip.good { border-color: rgba(22,163,74,0.45); }
+    .score-chip.warn { border-color: rgba(245,158,11,0.45); }
+    .score-chip.bad { border-color: rgba(220,38,38,0.45); }
+
+    .empty-node {
+      border-style: dashed;
+      background: rgba(255,255,255,0.02);
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .bench-list, .table-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bench-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      padding: 14px;
+      border-radius: 16px;
+    }
+
+    .bench-item strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: 11px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      margin-right: 6px;
+      margin-top: 4px;
+      color: #d9e6ff;
+    }
+
+    .admin-panel {
+      margin-top: 22px;
+      display: none;
+    }
+
+    .admin-panel.active {
+      display: block;
+    }
+
+    .admin-box {
+      display: grid;
+      grid-template-columns: 1.2fr 1.8fr;
+      gap: 14px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    label {
+      font-size: 12px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      outline: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      position: sticky;
+      top: 0;
+      background: var(--panel);
+      z-index: 1;
+    }
+
+    .table-scroll {
+      max-height: 520px;
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .notice {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .status {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .status.show { display: block; }
+    .status.ok {
+      background: rgba(22,163,74,0.12);
+      border: 1px solid rgba(22,163,74,0.25);
+      color: #bbf7d0;
+    }
+    .status.err {
+      background: rgba(220,38,38,0.12);
+      border: 1px solid rgba(220,38,38,0.25);
+      color: #fecaca;
+    }
+
+    .login-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.58);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .login-modal.active {
+      display: flex;
+    }
+
+    .login-card {
+      width: min(420px, 92vw);
+      background: #0f172a;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .login-card h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .login-card p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .login-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      justify-content: flex-end;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        height: auto;
+        position: static;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+      .grid-kpi {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .admin-box {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .grid-kpi {
+        grid-template-columns: 1fr;
+      }
+      .main, .sidebar {
+        padding: 16px;
+      }
+      .role-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="top-row">
-        <div>
-          <div class="small muted">Human Design Executive War Room</div>
-          <div class="title">Payment Solution Org Mapping</div>
-          <div class="subtitle">
-            Dashboard organisasi + job fit + chemistry karyawan berbasis Human Design.
-          </div>
+  <div class="app">
+    <main class="main">
+      <div class="topbar">
+        <div class="brand">
+          <h1>Human Design HR War Room</h1>
+          <p>Executive organizational intelligence dashboard</p>
         </div>
-        <div class="toolbar">
-          <button class="btn btn-primary" onclick="switchView('dashboard')">War Room Dashboard</button>
-          <button class="btn btn-purple" onclick="switchView('admin')">HR Admin Panel</button>
-          <button class="btn btn-success" onclick="loadEmployees()">Refresh</button>
-          <button class="btn btn-muted" onclick="recomputeAll()">Recompute</button>
+
+        <div class="actions">
+          <button id="refreshBtn" type="button" class="btn secondary">Refresh</button>
+          <button id="recomputeBtn" type="button" class="btn ghost">Recompute</button>
+          <button id="adminBtn" type="button" class="btn">HR Admin</button>
         </div>
       </div>
-    </div>
 
-    <div id="dashboardView">
-      <div class="grid">
-        <div class="panel">
-          <div class="flex" style="justify-content:space-between">
-            <div>
-              <div class="small muted">Sidebar</div>
-              <h2 class="sidebar-title">Bench / Unassigned</h2>
-            </div>
-            <span id="benchCount" class="badge gray">0</span>
+      <section class="grid-kpi" id="kpiGrid">
+        <div class="card kpi">
+          <div class="label">Total Employees</div>
+          <div class="value" id="kpiTotalEmployees">0</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Filled Roles</div>
+          <div class="value" id="kpiFilledRoles">0</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Open Positions</div>
+          <div class="value" id="kpiOpenRoles">0</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Bench Employees</div>
+          <div class="value" id="kpiBench">0</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <div>
+            <h2>Organizational Structure</h2>
+            <p>CEO at top, active placements in the main org, open roles below</p>
           </div>
-          <div id="benchList"></div>
         </div>
 
-        <div>
-          <div class="kpi-row">
-            <div class="card">
-              <h4>Average Job Fit</h4>
-              <div id="avgJobFit" class="title" style="font-size:28px">-</div>
-              <div class="muted small">Rata-rata kecocokan penempatan</div>
-            </div>
-            <div class="card">
-              <h4>Average Manager Chemistry</h4>
-              <div id="avgManagerChem" class="title" style="font-size:28px">-</div>
-              <div class="muted small">Rata-rata chemistry ke atasan</div>
-            </div>
-            <div class="card">
-              <h4>Average Team Chemistry</h4>
-              <div id="avgTeamChem" class="title" style="font-size:28px">-</div>
-              <div class="muted small">Rata-rata chemistry tim</div>
+        <div class="org-shell">
+          <div class="ceo-row" id="ceoRow"></div>
+          <div id="connector1" class="connector hidden"></div>
+
+          <div class="section-title">
+            <div>
+              <h2>Leadership & Team</h2>
+              <p>Only roles with assigned employees</p>
             </div>
           </div>
+          <div class="role-grid" id="filledRolesGrid"></div>
 
-          <div class="panel org">
-            <div class="small muted">Main Area</div>
-            <h2 class="section-title">The War Room</h2>
-            <div class="section-subtitle">Posisi terisi tampil di area utama. Posisi kosong dipindah ke Open Positions.</div>
+          <div id="connector2" class="connector hidden"></div>
 
-            <div class="org-top-single" id="orgCEO"></div>
+          <div class="section-title">
+            <div>
+              <h2>Open Positions</h2>
+              <p>Roles not yet assigned</p>
+            </div>
+          </div>
+          <div class="role-grid" id="openRolesGrid"></div>
+        </div>
+      </section>
 
-            <div class="org-divider"></div>
+      <section class="admin-panel" id="adminPanel">
+        <div class="section-title">
+          <div>
+            <h2>HR Admin Panel</h2>
+            <p>Manage employees, roles, and Human Design recomputation</p>
+          </div>
+        </div>
 
-            <div class="flex" style="justify-content:space-between">
+        <div class="admin-box">
+          <div class="card">
+            <h3 style="margin-top:0;">Add / Update Employee</h3>
+            <div class="form-grid">
               <div>
-                <div class
+                <label for="empId">ID</label>
+                <input id="empId" placeholder="Auto or manual ID" />
+              </div>
+              <div>
+                <label for="empName">Name</label>
+                <input id="empName" placeholder="Employee name" />
+              </div>
+              <div>
+                <label for="birthDate">Birth Date</label>
+                <input id="birthDate" type="date" />
+              </div>
+              <div>
+                <label for="birthTime">Birth Time</label>
+                <input id="birthTime" type="time" />
+              </div>
+              <div>
+                <label for="birthPlace">Birth Place</label>
+                <input id="birthPlace" placeholder="City, country" />
+              </div>
+              <div>
+                <label for="jobRole">Job Role</label>
+                <input id="jobRole" placeholder="e.g. Finance Lead" />
+              </div>
+              <div>
+                <label for="department">Department</label>
+                <input id="department" placeholder="e.g. Finance" />
+              </div>
+              <div>
+                <label for="managerId">Manager</label>
+                <select id="managerId"></select>
+              </div>
+              <div>
+                <label for="assignedRole">Assigned Role</label>
+                <select id="assignedRole"></select>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+              <button type="button" class="btn small" id="saveBtn">Save</button>
+              <button type="button" class="btn small secondary" id="clearBtn">Clear</button>
+              <button type="button" class="btn small ghost" id="deleteBtn">Delete</button>
+            </div>
+
+            <div id="formStatus" class="status"></div>
+            <div class="notice">Tip: click a row from the registry table to load employee data into the form.</div>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-top:0;">Employee Registry</h3>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Assigned Role</th>
+                    <th>Department</th>
+                    <th>Manager</th>
+                    <th>Fit</th>
+                  </tr>
+                </thead>
+                <tbody id="adminTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="section-title" style="margin-top:0;">
+        <div>
+          <h2>Bench / Unassigned</h2>
+          <p>Employees not mapped into active role slots</p>
+        </div>
+      </div>
+      <div id="benchList" class="bench-list"></div>
+    </aside>
+  </div>
+
+  <div class="login-modal" id="loginModal">
+    <div class="login-card">
+      <h3>HR Admin Access</h3>
+      <p>Enter admin password to open the HR panel.</p>
+
+      <div>
+        <label for="adminPasswordInput">Password</label>
+        <input id="adminPasswordInput" type="password" placeholder="Enter password" />
+      </div>
+
+      <div id="loginStatus" class="status"></div>
+
+      <div class="login-actions">
+        <button id="cancelLoginBtn" type="button" class="btn secondary">Cancel</button>
+        <button id="confirmLoginBtn" type="button" class="btn">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbwEwKhk_W82C6MN_4b2L_162P57Z6t8V_dm0mnk5uhu_ZSGg4Qk2cQQ6IfVo9w6_raRtA/exec";
+    const ADMIN_PASSWORD = "HRADMIN123";
+
+    const ROLE_ORDER_TOP = ["CEO", "HR", "Product Manager"];
+    const ROLE_ORDER_BOTTOM = ["Finance", "IT", "Regulatory", "Marketing", "Sales", "Staff"];
+    const ROLE_ORDER = [...ROLE_ORDER_TOP, ...ROLE_ORDER_BOTTOM];
+
+    let employees = [];
+    let adminUnlocked = false;
+
+    const SAMPLE_EMPLOYEES = [
+      {
+        id: "1",
+        name: "Maulana",
+        birthDate: "1990-01-10",
+        birthTime: "08:30",
+        birthPlace: "Jakarta Indonesia",
+        jobRole: "CEO",
+        department: "Executive",
+        managerId: "",
+        assignedRole: "CEO",
+        hdType: "Manifesting Generator",
+        hdProfile: "3/5",
+        hdAuthority: "Sacral",
+        roleFitScore: 91,
+        managerChemistryScore: 0,
+        teamChemistryScore: 84,
+        placementStatus: "Assigned",
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: "2",
+        name: "Sarah",
+        birthDate: "1993-02-14",
+        birthTime: "10:15",
+        birthPlace: "Bandung Indonesia",
+        jobRole: "HR Lead",
+        department: "HR",
+        managerId: "1",
+        assignedRole: "HR",
+        hdType: "Projector",
+        hdProfile: "2/4",
+        hdAuthority: "Splenic",
+        roleFitScore: 86,
+        managerChemistryScore: 88,
+        teamChemistryScore: 81,
+        placementStatus: "Assigned",
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: "3",
+        name: "Dimas",
+        birthDate: "1995-06-21",
+        birthTime: "14:00",
+        birthPlace: "Surabaya Indonesia",
+        jobRole: "IT Lead",
+        department: "IT",
+        managerId: "1",
+        assignedRole: "IT",
+        hdType: "Generator",
+        hdProfile: "5/1",
+        hdAuthority: "Sacral",
+        roleFitScore: 78,
+        managerChemistryScore: 72,
+        teamChemistryScore: 76,
+        placementStatus: "Assigned",
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: "4",
+        name: "Nadia",
+        birthDate: "1996-08-02",
+        birthTime: "09:45",
+        birthPlace: "Jakarta Indonesia",
+        jobRole: "Marketing Associate",
+        department: "Marketing",
+        managerId: "1",
+        assignedRole: "",
+        hdType: "Manifestor",
+        hdProfile: "6/2",
+        hdAuthority: "Emotional",
+        roleFitScore: 69,
+        managerChemistryScore: 75,
+        teamChemistryScore: 71,
+        placementStatus: "Bench",
+        updatedAt: new Date().toISOString()
+      }
+    ];
+
+    function el(id) {
+      return document.getElementById(id);
+    }
+
+    function showStatus(target, msg, ok = true) {
+      target.textContent = msg;
+      target.className = "status show " + (ok ? "ok" : "err");
+    }
+
+    function clearStatus(target) {
+      target.textContent = "";
+      target.className = "status";
+    }
+
+    function scoreClass(score) {
+      const n = Number(score || 0);
+      if (n >= 80) return "good";
+      if (n >= 65) return "warn";
+      return "bad";
+    }
+
+    function managerName(managerId) {
+      if (!managerId) return "-";
+      const found = employees.find(e => String(e.id) === String(managerId));
+      return found ? found.name : "-";
+    }
+
+    function getByAssignedRole(role) {
+      return employees.find(e => String(e.assignedRole || "").trim() === role);
+    }
+
+    function isBenchEmployee(emp) {
+      const assigned = String(emp.assignedRole || "").trim();
+      return !assigned || !ROLE_ORDER.includes(assigned);
+    }
+
+    function safe(val, fallback = "-") {
+      return val === undefined || val === null || val === "" ? fallback : val;
+    }
+
+    async function apiGet() {
+      const res = await fetch(API_URL, {
+        method: "GET",
+        cache: "no-store"
+      });
+      if (!res.ok) throw new Error("Failed to fetch dashboard data.");
+      return res.json();
+    }
+
+    async function apiPost(payload) {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error("Failed to send data.");
+      return res.json();
+    }
+
+    async function loadEmployees() {
+      try {
+        const response = await apiGet();
+        if (response && Array.isArray(response.data)) {
+          employees = response.data;
+        } else {
+          employees = [...SAMPLE_EMPLOYEES];
+        }
+      } catch (err) {
+        console.warn("Using sample data because API failed:", err);
+        employees = [...SAMPLE_EMPLOYEES];
+      }
+
+      renderDashboard();
+      fillRoleOptions();
+      fillManagerOptions();
+      renderAdminTable();
+    }
+
+    function renderDashboard() {
+      const ceo = getByAssignedRole("CEO");
+      const filledRoles = ROLE_ORDER.filter(role => role !== "CEO" && !!getByAssignedRole(role));
+      const emptyRoles = ROLE_ORDER.filter(role => role !== "CEO" && !getByAssignedRole(role));
+      const benchEmployees = employees.filter(isBenchEmployee);
+
+      el("kpiTotalEmployees").textContent = employees.length;
+      el("kpiFilledRoles").textContent = (ceo ? 1 : 0) + filledRoles.length;
+      el("kpiOpenRoles").textContent = emptyRoles.length + (ceo ? 0 : 1);
+      el("kpiBench").textContent = benchEmployees.length;
+
+      const ceoRow = el("ceoRow");
+      ceoRow.innerHTML = "";
+      if (ceo) {
+        ceoRow.appendChild(renderRoleNode("CEO", ceo, true));
+        el("connector1").classList.remove("hidden");
+      } else {
+        ceoRow.appendChild(renderEmptyRoleNode("CEO", "Top leadership role is open"));
+        el("connector1").classList.add("hidden");
+      }
+
+      const filledGrid = el("filledRolesGrid");
+      filledGrid.innerHTML = "";
+      filledRoles.forEach(role => {
+        const emp = getByAssignedRole(role);
+        filledGrid.appendChild(renderRoleNode(role, emp, false));
+      });
+
+      const openGrid = el("openRolesGrid");
+      openGrid.innerHTML = "";
+      const openRoles = ceo ? emptyRoles : ["CEO", ...emptyRoles];
+      openRoles.forEach(role => {
+        if (role === "CEO" && ceo) return;
+        openGrid.appendChild(renderEmptyRoleNode(role, "Waiting for assignment"));
+      });
+
+      if (filledRoles.length > 0) {
+        el("connector2").classList.remove("hidden");
+      } else {
+        el("connector2").classList.add("hidden");
+      }
+
+      const benchList = el("benchList");
+      benchList.innerHTML = "";
+      if (benchEmployees.length === 0) {
+        benchList.innerHTML = `<div class="card"><div class="muted">No bench employees at the moment.</div></div>`;
+      } else {
+        benchEmployees.forEach(emp => {
+          const div = document.createElement("div");
+          div.className = "bench-item";
+          div.innerHTML = `
+            <strong>${safe(emp.name)}</strong>
+            <div class="muted">${safe(emp.jobRole)} · ${safe(emp.department)}</div>
+            <div style="margin-top:8px;">
+              <span class="pill">${safe(emp.hdType)}</span>
+              <span class="pill">${safe(emp.hdProfile)}</span>
+              <span class="pill">${safe(emp.hdAuthority)}</span>
+            </div>
+          `;
+          benchList.appendChild(div);
+        });
+      }
+    }
+
+    function renderRoleNode(role, emp, isCEO) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "role-node";
+      wrapper.innerHTML = `
+        <div class="role-tag">${isCEO ? "Top Leadership" : "Filled Role"}</div>
+        <div class="role-title">${role}</div>
+        <div class="role-sub">${safe(emp.department, "Organization")}</div>
+        <div class="person-name">${safe(emp.name)}</div>
+        <div class="muted">${safe(emp.hdType)} · ${safe(emp.hdProfile)} · ${safe(emp.hdAuthority)}</div>
+        <div class="score-row">
+          <span class="score-chip ${scoreClass(emp.roleFitScore)}">Job Fit ${safe(emp.roleFitScore, 0)}%</span>
+          ${isCEO ? "" : `<span class="score-chip ${scoreClass(emp.managerChemistryScore)}">Mgr Chemistry ${safe(emp.managerChemistryScore, 0)}%</span>`}
+          <span class="score-chip ${scoreClass(emp.teamChemistryScore)}">Team Chemistry ${safe(emp.teamChemistryScore, 0)}%</span>
+        </div>
+      `;
+      return wrapper;
+    }
+
+    function renderEmptyRoleNode(role, reason) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "role-node empty-node";
+      wrapper.innerHTML = `
+        <div class="role-tag">Open Position</div>
+        <div class="role-title">${role}</div>
+        <div class="muted">${reason}</div>
+      `;
+      return wrapper;
+    }
+
+    function fillRoleOptions() {
+      const select = el("assignedRole");
+      select.innerHTML = `<option value="">-- Unassigned / Bench --</option>`;
+      ROLE_ORDER.forEach(role => {
+        const opt = document.createElement("option");
+        opt.value = role;
+        opt.textContent = role;
+        select.appendChild(opt);
+      });
+    }
+
+    function fillManagerOptions() {
+      const select = el("managerId");
+      select.innerHTML = `<option value="">-- No manager --</option>`;
+      employees.forEach(emp => {
+        const opt = document.createElement("option");
+        opt.value = emp.id;
+        opt.textContent = emp.name;
+        select.appendChild(opt);
+      });
+    }
+
+    function renderAdminTable() {
+      const tbody = el("adminTableBody");
+      tbody.innerHTML = "";
+
+      const sorted = [...employees].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+      sorted.forEach(emp => {
+        const tr = document.createElement("tr");
+        tr.style.cursor = "pointer";
+        tr.innerHTML = `
+          <td>${safe(emp.name)}</td>
+          <td>${safe(emp.assignedRole, "Bench")}</td>
+          <td>${safe(emp.department)}</td>
+          <td>${managerName(emp.managerId)}</td>
+          <td>${safe(emp.roleFitScore, 0)}%</td>
+        `;
+        tr.addEventListener("click", () => loadForm(emp));
+        tbody.appendChild(tr);
+      });
+    }
+
+    function loadForm(emp) {
+      el("empId").value = safe(emp.id, "");
+      el("empName").value = safe(emp.name, "");
+      el("birthDate").value = safe(emp.birthDate, "");
+      el("birthTime").value = safe(emp.birthTime, "");
+      el("birthPlace").value = safe(emp.birthPlace, "");
+      el("jobRole").value = safe(emp.jobRole, "");
+      el("department").value = safe(emp.department, "");
+      el("managerId").value = safe(emp.managerId, "");
+      el("assignedRole").value = safe(emp.assignedRole, "");
+      clearStatus(el("formStatus"));
+    }
+
+    function clearForm() {
+      el("empId").value = "";
+      el("empName").value = "";
+      el("birthDate").value = "";
+      el("birthTime").value = "";
+      el("birthPlace").value = "";
+      el("jobRole").value = "";
+      el("department").value = "";
+      el("managerId").value = "";
+      el("assignedRole").value = "";
+      clearStatus(el("formStatus"));
+    }
+
+    function collectFormData() {
+      return {
+        id: el("empId").value.trim(),
+        name: el("empName").value.trim(),
+        birthDate: el("birthDate").value,
+        birthTime: el("birthTime").value,
+        birthPlace: el("birthPlace").value.trim(),
+        jobRole: el("jobRole").value.trim(),
+        department: el("department").value.trim(),
+        managerId: el("managerId").value,
+        assignedRole: el("assignedRole").value,
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    async function saveEmployee() {
+      const data = collectFormData();
+      const status = el("formStatus");
+
+      if (!data.name) {
+        showStatus(status, "Name is required.", false);
+        return;
+      }
+
+      try {
+        if (API_URL) {
+          const action = data.id ? "update" : "add";
+          const response = await apiPost({ action, employee: data });
+          if (!response || response.success === false) throw new Error("Save failed.");
+          showStatus(status, "Employee saved successfully.");
+          await loadEmployees();
+          if (!data.id) clearForm();
+        } else {
+          if (data.id) {
+            const index = employees.findIndex(e => String(e.id) === String(data.id));
+            if (index >= 0) {
+              employees[index] = { ...employees[index], ...data };
+            } else {
+              employees.push({ ...data, id: String(Date.now()) });
+            }
+          } else {
+            employees.push({ ...data, id: String(Date.now()) });
+          }
+          showStatus(status, "Employee saved locally.");
+          renderDashboard();
+          fillManagerOptions();
+          renderAdminTable();
+          clearForm();
+        }
+      } catch (err) {
+        showStatus(status, "Save failed. " + err.message, false);
+      }
+    }
+
+    async function deleteEmployee() {
+      const id = el("empId").value.trim();
+      const status = el("formStatus");
+
+      if (!id) {
+        showStatus(status, "Load an employee first before deleting.", false);
+        return;
+      }
+
+      try {
+        if (API_URL) {
+          const response = await apiPost({ action: "delete", id });
+          if (!response || response.success === false) throw new Error("Delete failed.");
+          showStatus(status, "Employee deleted successfully.");
+          clearForm();
+          await loadEmployees();
+        } else {
+          employees = employees.filter(e => String(e.id) !== String(id));
+          showStatus(status, "Employee deleted locally.");
+          clearForm();
+          renderDashboard();
+          fillManagerOptions();
+          renderAdminTable();
+        }
+      } catch (err) {
+        showStatus(status, "Delete failed. " + err.message, false);
+      }
+    }
+
+    async function recomputeAll() {
+      try {
+        const btn = el("recomputeBtn");
+        btn.disabled = true;
+        btn.textContent = "Recomputing...";
+        await apiPost({ action: "recompute" });
+        await loadEmployees();
+      } catch (err) {
+        console.warn("Recompute failed:", err);
+        alert("Recompute failed: " + err.message);
+      } finally {
+        const btn = el("recomputeBtn");
+        btn.disabled = false;
+        btn.textContent = "Recompute";
+      }
+    }
+
+    function openAdminLogin() {
+      clearStatus(el("loginStatus"));
+      el("adminPasswordInput").value = "";
+      el("loginModal").classList.add("active");
+      setTimeout(() => el("adminPasswordInput").focus(), 50);
+    }
+
+    function closeAdminLogin() {
+      el("loginModal").classList.remove("active");
+    }
+
+    function unlockAdmin() {
+      const input = el("adminPasswordInput").value;
+      if (input === ADMIN_PASSWORD) {
+        adminUnlocked = true;
+        el("adminPanel").classList.add("active");
+        closeAdminLogin();
+      } else {
+        showStatus(el("loginStatus"), "Incorrect password.", false);
+      }
+    }
+
+    function bindEvents() {
+      el("refreshBtn").addEventListener("click", loadEmployees);
+      el("recomputeBtn").addEventListener("click", recomputeAll);
+
+      // This is the part that fixes the HR admin click issue.
+      // Explicit button type=button + direct click binding after DOM loads.
+      el("adminBtn").addEventListener("click", () => {
+        if (adminUnlocked) {
+          el("adminPanel").classList.toggle("active");
+        } else {
+          openAdminLogin();
+        }
+      });
+
+      el("cancelLoginBtn").addEventListener("click", closeAdminLogin);
+      el("confirmLoginBtn").addEventListener("click", unlockAdmin);
+
+      el("adminPasswordInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") unlockAdmin();
+      });
+
+      el("saveBtn").addEventListener("click", saveEmployee);
+      el("clearBtn").addEventListener("click", clearForm);
+      el("deleteBtn").addEventListener("click", deleteEmployee);
+
+      el("loginModal").addEventListener("click", (e) => {
+        if (e.target === el("loginModal")) closeAdminLogin();
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      bindEvents();
+      await loadEmployees();
+    });
+  </script>
+</body>
+</html>
