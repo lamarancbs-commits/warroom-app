@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -26,7 +26,7 @@
       color:var(--text);
     }
     .container{max-width:1400px;margin:0 auto;padding:24px}
-    .header,.panel,.card,.node,.table-wrap,.sidebar-card{
+    .header,.panel,.card,.node,.table-wrap,.sidebar-card,.open-role-card{
       background:rgba(18,26,47,.92);
       border:1px solid rgba(154,167,194,.15);
       box-shadow:0 20px 40px rgba(0,0,0,.25);
@@ -66,11 +66,22 @@
     .sidebar-card h4{margin:0 0 6px 0;font-size:15px}
     .sidebar-card p{margin:4px 0;color:var(--muted);font-size:13px}
     .org{padding:16px}
-    .org-grid-top{
-      display:grid;grid-template-columns:repeat(3,1fr);gap:16px
+    .org-top-single{
+      display:flex;
+      justify-content:center;
+      margin:18px 0 22px 0;
     }
-    .org-grid-bottom{
-      display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-top:18px
+    .org-grid-filled{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:16px;
+      margin-top:18px;
+    }
+    .org-grid-empty{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:12px;
+      margin-top:14px;
     }
     .node{
       padding:14px;min-height:220px;position:relative;border:2px solid #334155
@@ -78,9 +89,10 @@
     .node.green-border{border-color:var(--green)}
     .node.yellow-border{border-color:var(--yellow)}
     .node.red-border{border-color:var(--red)}
-    .node h3{margin:0;font-size:18px}
+    .node.gray-border{border-color:#334155}
+    .node h3{margin:0;font-size:18px;line-height:1.2}
     .node .role{margin:4px 0 10px 0;color:#7dd3fc;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
-    .node .line{font-size:13px;color:var(--muted);margin:5px 0}
+    .node .line{font-size:13px;color:var(--muted);margin:5px 0;line-height:1.45}
     .node .score{margin-top:10px}
     .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
     .card{padding:16px}
@@ -89,8 +101,25 @@
       display:grid;grid-template-columns:repeat(2,1fr);gap:12px
     }
     .input,select{
-      width:100%;padding:12px;border-radius:12px;border:1px solid rgba(154,167,194,.18);
-      background:#0b1327;color:white
+      width:100%;
+      height:48px;
+      padding:12px;
+      border-radius:12px;
+      border:1px solid rgba(154,167,194,.18);
+      background:#0b1327;
+      color:white;
+      appearance:none;
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #9fb3d9 50%),
+        linear-gradient(135deg, #9fb3d9 50%, transparent 50%);
+      background-position:
+        calc(100% - 20px) calc(50% - 3px),
+        calc(100% - 14px) calc(50% - 3px);
+      background-size:6px 6px, 6px 6px;
+      background-repeat:no-repeat;
+      padding-right:40px;
     }
     label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
     .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
@@ -102,10 +131,36 @@
     .hidden{display:none}
     .flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .toolbar{display:flex;gap:10px;flex-wrap:wrap}
+    .org-divider{
+      height:1px;
+      background:rgba(154,167,194,.12);
+      margin:18px 0;
+    }
+    .open-role-card{
+      background:rgba(11,19,39,.85);
+      border:1px dashed rgba(154,167,194,.22);
+      padding:14px;
+      min-height:96px;
+    }
+    .open-role-card .role{
+      margin:0 0 8px 0;
+      color:#7dd3fc;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+    .open-role-card .text{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+    .section-subtitle{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:6px;
+    }
     @media(max-width:1100px){
       .grid{grid-template-columns:1fr}
-      .org-grid-top{grid-template-columns:1fr}
-      .org-grid-bottom{grid-template-columns:1fr}
       .kpi-row{grid-template-columns:1fr}
       .form-grid{grid-template-columns:1fr}
     }
@@ -166,370 +221,12 @@
           <div class="panel org">
             <div class="small muted">Main Area</div>
             <h2 class="section-title">The War Room</h2>
+            <div class="section-subtitle">Posisi terisi tampil di area utama. Posisi kosong dipindah ke Open Positions.</div>
 
-            <div class="org-grid-top" id="orgTop"></div>
-            <div class="org-grid-bottom" id="orgBottom"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+            <div class="org-top-single" id="orgCEO"></div>
 
-    <div id="adminView" class="hidden">
-      <div class="grid">
-        <div class="panel">
-          <div class="small muted">HR Admin Panel</div>
-          <h2 class="section-title">Employee Form</h2>
+            <div class="org-divider"></div>
 
-          <div class="form-grid" style="margin-top:14px">
-            <div>
-              <label>Name</label>
-              <input id="name" class="input" />
-            </div>
-            <div>
-              <label>Birth Date</label>
-              <input id="birthDate" type="date" class="input" />
-            </div>
-            <div>
-              <label>Birth Time</label>
-              <input id="birthTime" type="time" class="input" />
-            </div>
-            <div>
-              <label>Birth Place</label>
-              <input id="birthPlace" class="input" placeholder="Jakarta, Indonesia" />
-            </div>
-            <div>
-              <label>Job Role</label>
-              <select id="jobRole"></select>
-            </div>
-            <div>
-              <label>Department</label>
-              <input id="department" class="input" placeholder="Commercial / Tech / Compliance" />
-            </div>
-            <div>
-              <label>Manager</label>
-              <select id="managerId"></select>
-            </div>
-            <div>
-              <label>Assigned Role</label>
-              <select id="assignedRole"></select>
-            </div>
-
-            <div>
-              <label>HD Type</label>
-              <select id="hdType">
-                <option value="">Auto/API</option>
-                <option>Manifestor</option>
-                <option>Generator</option>
-                <option>Manifesting Generator</option>
-                <option>Projector</option>
-                <option>Reflector</option>
-              </select>
-            </div>
-            <div>
-              <label>HD Profile</label>
-              <input id="hdProfile" class="input" placeholder="e.g. 4/6" />
-            </div>
-            <div>
-              <label>HD Authority</label>
-              <select id="hdAuthority">
-                <option value="">Auto/API</option>
-                <option>Emotional</option>
-                <option>Sacral</option>
-                <option>Splenic</option>
-                <option>Self-Projected</option>
-                <option>Ego</option>
-                <option>Lunar</option>
-              </select>
-            </div>
-            <div>
-              <label>Bodygraph URL</label>
-              <input id="bodygraphUrl" class="input" placeholder="optional" />
-            </div>
-          </div>
-
-          <div class="actions">
-            <button class="btn btn-primary" onclick="saveEmployee()">Save</button>
-            <button class="btn btn-muted" onclick="resetForm()">Clear</button>
-          </div>
-        </div>
-
-        <div class="table-wrap">
-          <div class="small muted">Employee Registry</div>
-          <h2 class="section-title">All Employees</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Role</th>
-                <th>HD</th>
-                <th>Job Fit</th>
-                <th>Mgr Chem</th>
-                <th>Team Chem</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="employeeTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwEwKhk_W82C6MN_4b2L_162P57Z6t8V_dm0mnk5uhu_ZSGg4Qk2cQQ6IfVo9w6_raRtA/exec';
-    const ADMIN_PASSWORD = 'HRADMIN123';
-
-    const ROLE_ORDER_TOP = ['CEO', 'HR', 'Product Manager'];
-    const ROLE_ORDER_BOTTOM = ['Finance', 'IT', 'Regulatory', 'Marketing', 'Sales', 'Staff'];
-
-    let employees = [];
-    let roles = [];
-    let editingId = '';
-
-    async function apiPost(payload) {
-      const res = await fetch(GAS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      });
-      return await res.json();
-    }
-
-    async function apiGet() {
-      const res = await fetch(GAS_URL);
-      return await res.json();
-    }
-
-    function switchView(view) {
-      if (view === 'admin') {
-        const entered = prompt('Enter HR Admin password');
-        if (entered !== ADMIN_PASSWORD) {
-          alert('Wrong password');
-          return;
-        }
-      }
-      document.getElementById('dashboardView').classList.toggle('hidden', view !== 'dashboard');
-      document.getElementById('adminView').classList.toggle('hidden', view !== 'admin');
-    }
-
-    function scoreBadge(score) {
-      if (score === '' || score === null || score === undefined) return '<span class="badge gray">-</span>';
-      const s = Number(score);
-      if (s >= 75) return `<span class="badge green">${s}%</span>`;
-      if (s >= 50) return `<span class="badge yellow">${s}%</span>`;
-      return `<span class="badge red">${s}%</span>`;
-    }
-
-    function scoreBorder(score) {
-      const s = Number(score || 0);
-      if (s >= 75) return 'green-border';
-      if (s >= 50) return 'yellow-border';
-      return 'red-border';
-    }
-
-    function getByAssignedRole(role) {
-      return employees.find(e => e.assignedRole === role);
-    }
-
-    function average(field) {
-      const nums = employees
-        .map(e => Number(e[field]))
-        .filter(n => !Number.isNaN(n) && n > 0);
-      if (!nums.length) return '-';
-      return Math.round(nums.reduce((a,b) => a + b, 0) / nums.length) + '%';
-    }
-
-    function renderDashboard() {
-      document.getElementById('avgJobFit').innerText = average('roleFitScore');
-      document.getElementById('avgManagerChem').innerText = average('managerChemistryScore');
-      document.getElementById('avgTeamChem').innerText = average('teamChemistryScore');
-
-      const bench = employees.filter(e => !e.assignedRole || ![...ROLE_ORDER_TOP, ...ROLE_ORDER_BOTTOM].includes(e.assignedRole));
-      document.getElementById('benchCount').innerText = bench.length;
-
-      document.getElementById('benchList').innerHTML = bench.length ? bench.map(e => `
-        <div class="sidebar-card">
-          <h4>${escapeHtml(e.name || '-')}</h4>
-          <p>${escapeHtml(e.jobRole || '-')}</p>
-          <p>${escapeHtml(e.hdType || '-')} • ${escapeHtml(e.hdProfile || '-')} • ${escapeHtml(e.hdAuthority || '-')}</p>
-          <p>Job Fit: ${e.roleFitScore || '-'}%</p>
-        </div>
-      `).join('') : `<div class="sidebar-card"><p>Tidak ada bench saat ini.</p></div>`;
-
-      document.getElementById('orgTop').innerHTML = ROLE_ORDER_TOP.map(renderRoleNode).join('');
-      document.getElementById('orgBottom').innerHTML = ROLE_ORDER_BOTTOM.map(renderRoleNode).join('');
-    }
-
-    function renderRoleNode(role) {
-      const e = getByAssignedRole(role);
-      if (!e) {
-        return `
-          <div class="node">
-            <div class="role">${role}</div>
-            <h3>Empty</h3>
-            <div class="line">Belum ada karyawan ditugaskan</div>
-          </div>
-        `;
-      }
-
-      return `
-        <div class="node ${scoreBorder(e.roleFitScore)}">
-          <div class="role">${escapeHtml(role)}</div>
-          <h3>${escapeHtml(e.name || '-')}</h3>
-          <div class="line"><strong>Job Role:</strong> ${escapeHtml(e.jobRole || '-')}</div>
-          <div class="line"><strong>Type:</strong> ${escapeHtml(e.hdType || '-')}</div>
-          <div class="line"><strong>Profile:</strong> ${escapeHtml(e.hdProfile || '-')}</div>
-          <div class="line"><strong>Authority:</strong> ${escapeHtml(e.hdAuthority || '-')}</div>
-          <div class="score"><strong>Job Fit:</strong> ${scoreBadge(e.roleFitScore)}</div>
-          <div class="score"><strong>Manager Chemistry:</strong> ${scoreBadge(e.managerChemistryScore)}</div>
-          <div class="score"><strong>Team Chemistry:</strong> ${scoreBadge(e.teamChemistryScore)}</div>
-          <div class="line" style="margin-top:10px">${escapeHtml(e.roleFitReason || '')}</div>
-        </div>
-      `;
-    }
-
-    function renderAdminTable() {
-      document.getElementById('employeeTableBody').innerHTML = employees.map(e => `
-        <tr>
-          <td>${escapeHtml(e.name || '-')}</td>
-          <td>${escapeHtml(e.jobRole || '-')}</td>
-          <td>
-            ${escapeHtml(e.hdType || '-')}<br/>
-            ${escapeHtml(e.hdProfile || '-')}<br/>
-            ${escapeHtml(e.hdAuthority || '-')}
-          </td>
-          <td>${scoreBadge(e.roleFitScore)}</td>
-          <td>${scoreBadge(e.managerChemistryScore)}</td>
-          <td>${scoreBadge(e.teamChemistryScore)}</td>
-          <td>
-            <button class="btn btn-muted" onclick="editEmployee('${e.id}')">Edit</button>
-            <button class="btn btn-danger" onclick="deleteEmployee('${e.id}')">Delete</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function fillRoleOptions() {
-      const jobRole = document.getElementById('jobRole');
-      const assignedRole = document.getElementById('assignedRole');
-      jobRole.innerHTML = roles.map(r => `<option value="${r}">${r}</option>`).join('');
-      assignedRole.innerHTML = `<option value="">Unassigned</option>` + roles.map(r => `<option value="${r}">${r}</option>`).join('');
-    }
-
-    function fillManagerOptions() {
-      const manager = document.getElementById('managerId');
-      manager.innerHTML = `<option value="">No Manager</option>` + employees.map(e =>
-        `<option value="${e.id}">${escapeHtml(e.name)} (${escapeHtml(e.jobRole || '-')})</option>`
-      ).join('');
-    }
-
-    function resetForm() {
-      editingId = '';
-      [
-        'name','birthDate','birthTime','birthPlace','department',
-        'managerId','assignedRole','hdType','hdProfile','hdAuthority','bodygraphUrl'
-      ].forEach(id => document.getElementById(id).value = '');
-      if (roles.length) {
-        document.getElementById('jobRole').value = roles[0];
-      }
-    }
-
-    function editEmployee(id) {
-      const e = employees.find(x => x.id === id);
-      if (!e) return;
-      editingId = e.id;
-      document.getElementById('name').value = e.name || '';
-      document.getElementById('birthDate').value = e.birthDate || '';
-      document.getElementById('birthTime').value = e.birthTime || '';
-      document.getElementById('birthPlace').value = e.birthPlace || '';
-      document.getElementById('jobRole').value = e.jobRole || '';
-      document.getElementById('department').value = e.department || '';
-      document.getElementById('managerId').value = e.managerId || '';
-      document.getElementById('assignedRole').value = e.assignedRole || '';
-      document.getElementById('hdType').value = e.hdType || '';
-      document.getElementById('hdProfile').value = e.hdProfile || '';
-      document.getElementById('hdAuthority').value = e.hdAuthority || '';
-      document.getElementById('bodygraphUrl').value = e.bodygraphUrl || '';
-      switchView('admin');
-    }
-
-    async function saveEmployee() {
-      const employee = {
-        id: editingId,
-        name: document.getElementById('name').value.trim(),
-        birthDate: document.getElementById('birthDate').value,
-        birthTime: document.getElementById('birthTime').value,
-        birthPlace: document.getElementById('birthPlace').value.trim(),
-        jobRole: document.getElementById('jobRole').value,
-        department: document.getElementById('department').value.trim(),
-        managerId: document.getElementById('managerId').value,
-        assignedRole: document.getElementById('assignedRole').value,
-        hdType: document.getElementById('hdType').value,
-        hdProfile: document.getElementById('hdProfile').value.trim(),
-        hdAuthority: document.getElementById('hdAuthority').value,
-        bodygraphUrl: document.getElementById('bodygraphUrl').value.trim()
-      };
-
-      if (!employee.name) {
-        alert('Name wajib diisi');
-        return;
-      }
-
-      const action = editingId ? 'update' : 'add';
-      const res = await apiPost({ action, employee });
-      if (!res.success) {
-        alert('Error: ' + res.error);
-        return;
-      }
-      resetForm();
-      await loadEmployees();
-      alert(action === 'add' ? 'Employee added' : 'Employee updated');
-    }
-
-    async function deleteEmployee(id) {
-      if (!confirm('Delete this employee?')) return;
-      const res = await apiPost({ action: 'delete', id });
-      if (!res.success) {
-        alert('Error: ' + res.error);
-        return;
-      }
-      await loadEmployees();
-    }
-
-    async function recomputeAll() {
-      const res = await apiPost({ action: 'recompute' });
-      if (!res.success) {
-        alert('Error: ' + res.error);
-        return;
-      }
-      await loadEmployees();
-      alert('Recomputed');
-    }
-
-    async function loadEmployees() {
-      const res = await apiGet();
-      if (!res.success) {
-        alert('Failed to load data: ' + res.error);
-        return;
-      }
-      employees = res.data || [];
-      roles = res.roles || [];
-      fillRoleOptions();
-      fillManagerOptions();
-      renderDashboard();
-      renderAdminTable();
-    }
-
-    function escapeHtml(str) {
-      return String(str || '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
-    }
-
-    loadEmployees();
-  </script>
-</body>
-</html>
+            <div class="flex" style="justify-content:space-between">
+              <div>
+                <div class
